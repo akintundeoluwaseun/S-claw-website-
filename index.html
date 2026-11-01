@@ -60,35 +60,59 @@
     <!-- HERO -->
     <section class="hero" id="top">
       <div class="glow" aria-hidden="true"></div>
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <p class="pill"><span class="dot"></span> Free · Private · No API keys</p>
-          <h1>Tell your computer what to do.<br /><span class="grad">S-CLAW does it.</span></h1>
-          <p class="lead">Type a task in plain English. S-CLAW plans it, carries it out on your own computer step by step, and checks each step really worked. Anything important waits for your OK.</p>
-          <div class="hero-cta">
-            <a class="btn btn-primary btn-lg" id="heroDl" href="#download">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
-              <span id="heroDlText">Download S-CLAW</span>
-            </a>
-            <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
-          </div>
-          <p class="fine" id="heroFine">Windows · macOS · Linux · Android — version <span data-version>0.5.0</span></p>
+      <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="wrap hero-copy">
+        <p class="pill"><span class="dot"></span> Free · Private · No API keys</p>
+        <h1>Tell your computer what to do.<br /><span class="grad">S-CLAW does it.</span></h1>
+        <p class="lead">Type a task in plain English. S-CLAW plans it, carries it out on your own computer step by step, and checks each step really worked. Anything important waits for your OK.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg btn-shine" id="heroDl" href="#download">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
+            <span id="heroDlText">Download S-CLAW</span>
+          </a>
+          <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
         </div>
+        <p class="fine" id="heroFine">Windows · macOS · Linux · Android — version <span data-version>0.5.0</span></p>
+      </div>
 
-        <div class="hero-visual">
-          <div class="orb orb-xl" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
-          <div class="cmd" role="img" aria-label="Example: S-CLAW command bar running a task">
-            <div class="cmd-bar">
-              <span class="orb orb-xs" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="cmd-text" id="cmdText">Reply to Mum on WhatsApp: I'll call at 7</span><span class="caret" aria-hidden="true"></span>
+      <div class="wrap-wide">
+        <div class="stage" id="stage" role="img" aria-label="Animation: S-CLAW on a laptop replying to a WhatsApp message, emailing an invoice and booking a calendar slot, asking for approval before each one.">
+          <div class="stage-fallback">
+            <div class="orb orb-xl" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
+            <div class="cmd">
+              <div class="cmd-bar">
+                <span class="orb orb-xs" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="cmd-text" id="cmdText">Reply to Mum on WhatsApp: I'll call at 7</span><span class="caret" aria-hidden="true"></span>
+              </div>
+              <ol class="cmd-steps" id="cmdSteps">
+                <li class="done">Open WhatsApp</li>
+                <li class="done">Find the chat "Mum"</li>
+                <li class="done">Type the message</li>
+                <li class="ask">Send "I'll call at 7" to Mum? <span class="chip">Approve</span></li>
+              </ol>
             </div>
-            <ol class="cmd-steps" id="cmdSteps">
-              <li class="done">Open WhatsApp</li>
-              <li class="done">Find the chat "Mum"</li>
-              <li class="done">Type the message</li>
-              <li class="ask">Send "I'll call at 7" to Mum? <span class="chip">Approve</span></li>
-            </ol>
           </div>
+          <div class="stage-caption" aria-hidden="true">
+            <span class="live"><i></i> Live demo</span>
+            <span id="stageCaption">Reply to Mum on WhatsApp: I'll call at 7</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS + APPS -->
+    <section class="strip" aria-label="S-CLAW at a glance">
+      <div class="wrap stats">
+        <div class="stat"><strong data-count="0">0</strong><span>API keys needed</span></div>
+        <div class="stat"><strong><span data-count="100">100</span>%</strong><span>on your own computer</span></div>
+        <div class="stat"><strong data-count="4">4</strong><span>platforms</span></div>
+        <div class="stat"><strong>₦<span data-count="0">0</span></strong><span>to download and use</span></div>
+      </div>
+      <p class="marquee-label">Works with the apps you already use</p>
+      <div class="marquee" aria-label="WhatsApp Desktop, Word, Excel, Outlook, Chrome, Edge, File Explorer, PDFs, Calendar, TechDesk, Notepad, Settings">
+        <div class="marquee-track">
+          <span>WhatsApp Desktop</span><span>Microsoft Word</span><span>Excel</span><span>Outlook</span><span>Chrome</span><span>Edge</span><span>File Explorer</span><span>PDFs</span><span>Calendar</span><span>TechDesk</span><span>Notepad</span><span>Settings</span>
+          <span aria-hidden="true">WhatsApp Desktop</span><span aria-hidden="true">Microsoft Word</span><span aria-hidden="true">Excel</span><span aria-hidden="true">Outlook</span><span aria-hidden="true">Chrome</span><span aria-hidden="true">Edge</span><span aria-hidden="true">File Explorer</span><span aria-hidden="true">PDFs</span><span aria-hidden="true">Calendar</span><span aria-hidden="true">TechDesk</span><span aria-hidden="true">Notepad</span><span aria-hidden="true">Settings</span>
         </div>
       </div>
     </section>
@@ -102,42 +126,42 @@
           <p class="sec-sub">S-CLAW uses your apps the way you would — so it already works with what you have installed.</p>
         </header>
         <div class="grid feats">
-          <article class="card">
+          <article class="card tilt">
             <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="M8 21h8M12 17v4"/></svg></span>
             <h3>Operates your apps</h3>
             <p>Opens apps, switches windows, reads the screen, clicks and types — WhatsApp, Word, your shop software, anything.</p>
           </article>
-          <article class="card">
+          <article class="card tilt">
             <span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span>
             <h3>Works the web</h3>
             <p>Searches, reads pages, fills forms and downloads files — and tells you honestly when it hits a login or CAPTCHA.</p>
           </article>
-          <article class="card">
+          <article class="card tilt">
             <span class="ico"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></span>
             <h3>Reads documents</h3>
             <p>PDFs (even scanned ones), Word, Excel and text. It shows which text came from a scan and how sure it is.</p>
           </article>
-          <article class="card">
+          <article class="card tilt">
             <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
             <h3>Calendar &amp; reminders</h3>
             <p>Create events, find free time and get real reminders. Works with Outlook, Google and other calendar apps.</p>
           </article>
-          <article class="card">
+          <article class="card tilt">
             <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6c0 4-2 5-2 7h16c0-2-2-3-2-7a6 6 0 0 0-6-6zM10 20a2 2 0 0 0 4 0"/></svg></span>
             <h3>Morning briefing</h3>
             <p>Today's agenda and anything left unfinished, once a day — always saying what it can't see.</p>
           </article>
-          <article class="card">
+          <article class="card tilt">
             <span class="ico"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
             <h3>Voice</h3>
             <p>Push to talk. You see the transcript first, so nothing happens until it heard you right.</p>
           </article>
-          <article class="card">
+          <article class="card tilt">
             <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3c5 0 8 3 8 7s-3 7-8 7l-5 4v-5c-2-1.3-3-3.3-3-6 0-4 3-7 8-7z"/></svg></span>
             <h3>Remembers you</h3>
             <p>Your preferences, projects and contacts. Never passwords, codes or card numbers — it refuses those.</p>
           </article>
-          <article class="card">
+          <article class="card tilt">
             <span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
             <h3>Scheduled jobs</h3>
             <p>Set tasks to run later or every day while S-CLAW is open, right from the tray.</p>
@@ -154,22 +178,46 @@
           <h2>Three steps. You stay in charge.</h2>
         </header>
         <ol class="steps">
-          <li class="step">
+          <li class="step tilt">
             <span class="num">1</span>
             <h3>Type or say it</h3>
             <p>Use the quick bar at the top of your screen: “Find last month's invoice PDF and email it to Tunde.”</p>
           </li>
-          <li class="step">
+          <li class="step tilt">
             <span class="num">2</span>
             <h3>S-CLAW plans it</h3>
             <p>It breaks the job into clear steps and shows you the plan before it starts.</p>
           </li>
-          <li class="step">
+          <li class="step tilt">
             <span class="num">3</span>
             <h3>You approve what matters</h3>
             <p>Sending, deleting or paying waits for you — and the approval says exactly what will happen, then every step is checked.</p>
           </li>
         </ol>
+      </div>
+    </section>
+
+    <!-- 3D TASK RING -->
+    <section class="section ring-sec" id="tasks">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="eyebrow">Just ask</p>
+          <h2>One sentence in. <span class="grad">Real work out.</span></h2>
+          <p class="sec-sub">A few of the things people hand to S-CLAW every day.</p>
+        </header>
+      </div>
+      <div class="ring-stage" id="ringStage">
+        <div class="ring-core" aria-hidden="true"><span class="orb orb-ring"><i></i><i></i><i></i></span></div>
+        <div class="ring" id="ring">
+          <div class="task"><span class="t-ico" style="--c:#25d366">💬</span><p>“Tell the shop group the stock has arrived”</p><div class="bar"><i></i></div><small>WhatsApp · sent</small></div>
+          <div class="task"><span class="t-ico" style="--c:#ff6b6b">📄</span><p>“Summarise this scanned PDF in 5 points”</p><div class="bar"><i></i></div><small>PDF · done</small></div>
+          <div class="task"><span class="t-ico" style="--c:#6e8bff">📅</span><p>“Find me a free hour on Thursday”</p><div class="bar"><i></i></div><small>Calendar · 3 PM free</small></div>
+          <div class="task"><span class="t-ico" style="--c:#3ddc97">📊</span><p>“Total this month's sales in Excel”</p><div class="bar"><i></i></div><small>Excel · ₦1.2m</small></div>
+          <div class="task"><span class="t-ico" style="--c:#b38cff">🔎</span><p>“Compare prices for an i5 laptop online”</p><div class="bar"><i></i></div><small>Browser · 6 found</small></div>
+          <div class="task"><span class="t-ico" style="--c:#f3b65c">⏰</span><p>“Remind me to call Ada at 4”</p><div class="bar"><i></i></div><small>Reminder · set</small></div>
+          <div class="task"><span class="t-ico" style="--c:#ff8a6b">🛠️</span><p>“Log this HP laptop repair in TechDesk”</p><div class="bar"><i></i></div><small>TechDesk · saved</small></div>
+          <div class="task"><span class="t-ico" style="--c:#8aa2ff">✉️</span><p>“Draft a polite reply to this email”</p><div class="bar"><i></i></div><small>Outlook · drafted</small></div>
+        </div>
       </div>
     </section>
 
@@ -306,5 +354,7 @@
 
   <script src="/downloads.js"></script>
   <script src="/app.js"></script>
+  <script type="importmap">{ "imports": { "three": "/vendor/three.module.min.js" } }</script>
+  <script type="module" src="/hero3d.js"></script>
 </body>
 </html>

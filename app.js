@@ -148,6 +148,41 @@
   }
   play();
 
+  /* ---------- 3D tilt + glare on cards ---------- */
+  var finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (finePointer && !reduce) {
+    document.querySelectorAll(".tilt").forEach(function (el) {
+      el.addEventListener("pointermove", function (e) {
+        var r = el.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        el.style.transform = "perspective(800px) rotateX(" + ((0.5 - y) * 12).toFixed(2) + "deg) rotateY(" + ((x - 0.5) * 14).toFixed(2) + "deg) translateY(-4px)";
+        el.style.setProperty("--mx", (x * 100).toFixed(1) + "%");
+        el.style.setProperty("--my", (y * 100).toFixed(1) + "%");
+      });
+      el.addEventListener("pointerleave", function () { el.style.transform = ""; });
+    });
+  }
+
+  /* ---------- count-up stats ---------- */
+  var counters = document.querySelectorAll("[data-count]");
+  function runCount(el) {
+    var end = +el.dataset.count, t0 = null;
+    if (reduce || end === 0) { el.textContent = end; return; }
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / 1400), v = Math.round(end * (1 - Math.pow(1 - p, 3)));
+      el.textContent = v;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if ("IntersectionObserver" in window) {
+    var co = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { runCount(e.target); co.unobserve(e.target); } });
+    }, { threshold: 0.5 });
+    counters.forEach(function (c) { co.observe(c); });
+  } else counters.forEach(runCount);
+
   /* ---------- reveal on scroll ---------- */
   var els = document.querySelectorAll(".sec-head, .card, .step, .final, .install");
   if ("IntersectionObserver" in window && !reduce) {
