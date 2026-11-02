@@ -47,7 +47,7 @@
     if (/win/i.test(ua)) return "windows";
     return null;
   }
-  var NAMES = { windows: "Windows", mac: "macOS", linux: "Linux", android: "Android" };
+  var NAMES = { windows: "Windows", mac: "Mac", linux: "Linux", android: "Android" };
   var ICONS = {
     windows: '<svg viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3zM12 4.2 21 3v8.5h-9zM3 13h7.5v7.1L3 19zM12 13h9v8l-9-1.2z" fill="currentColor" stroke="none"/></svg>',
     mac: '<svg viewBox="0 0 24 24"><path d="M16.4 12.6c0-2.4 2-3.5 2-3.6-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.9-.9-3.1-.8C6.8 7.3 5.3 8.2 4.5 9.7c-1.7 2.9-.4 7.2 1.2 9.6.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8s1.9.8 3.1.8c1.3 0 2.1-1.2 2.9-2.4.9-1.3 1.3-2.6 1.3-2.7 0 0-2.7-1-2.7-4zM14.1 5.5c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1 .1 2.1-.5 2.7-1.3z" fill="currentColor" stroke="none"/></svg>',
@@ -59,85 +59,127 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function fileName(url) { try { return decodeURIComponent(url.split("?")[0].split("/").pop()); } catch (e) { return ""; } }
 
-  /* ---------- download panel ---------- */
-  var panel = document.getElementById("dlPanel");
-  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tabs [role=tab]"));
+  /* ---------- guided download page ---------- */
+  var VIS = {
+    file: function (os) {
+      var f = D[os] && D[os].file || "S-CLAW";
+      return '<div class="vis vis-file"><span class="vf-ico">' + DL_ICON + '</span><span class="vf-name">' + esc(f) + '</span><span class="vf-click">double-click</span></div>';
+    },
+    smartscreen: function () {
+      return '<div class="vis vis-ss"><p class="ss-t">Windows protected your PC</p><p class="ss-l"><u class="hl">More info</u></p><div class="ss-btns"><span class="hl hl-btn">Run anyway</span><span>Don\'t run</span></div></div>';
+    },
+    installer: function () {
+      return '<div class="vis vis-inst"><span class="orb orb-xs"><i></i><i></i><i></i></span><b>S-CLAW Setup</b><div class="inst-bar"><i></i></div><span class="hl hl-btn">Install</span></div>';
+    },
+    drag: function () {
+      return '<div class="vis vis-drag"><span class="app-ic"><span class="orb orb-xs"><i></i><i></i><i></i></span></span><span class="drag-arrow">→</span><span class="folder">Applications</span></div>';
+    },
+    rightclick: function () {
+      return '<div class="vis vis-menu"><span class="hl">Open</span><span>Show in Finder</span><span>Get Info</span></div>';
+    },
+    exec: function () {
+      return '<div class="vis vis-exec"><span class="toggle on"><i></i></span><span>Allow executing as a program</span></div>';
+    },
+    terminal: function () {
+      return '<div class="vis vis-term"><code>$ chmod +x S-CLAW-Linux.AppImage</code><code>$ ./S-CLAW-Linux.AppImage</code></div>';
+    },
+  };
 
-  function render(os) {
-    var p = D[os]; if (!p || !panel) return;
-    tabs.forEach(function (t) {
-      var on = t.dataset.os === os;
-      t.setAttribute("aria-selected", String(on));
-      t.tabIndex = on ? 0 : -1;
+  var osPick = document.getElementById("osPick");
+  var dlBox = document.getElementById("dlBox");
+  var installCards = document.getElementById("installCards");
+  var detected = detectOS();
+  var onPhone = /android|iphone|ipad|ipod/i.test(navigator.userAgent || "");
+
+  function pickOS(os) {
+    if (!dlBox) return;
+    var p = D[os]; if (!p) return;
+    Array.prototype.forEach.call(osPick.querySelectorAll("button"), function (b) {
+      var on = b.dataset.os === os;
+      b.setAttribute("aria-checked", String(on));
+      b.tabIndex = on ? 0 : -1;
     });
-    var html = '<p class="dl-meta">' + esc(p.label) + "</p>";
+    var line = document.getElementById("osLine");
+    if (line) line.textContent = onPhone ? "You're on a phone — pick the computer you'll install S-CLAW on." : os === detected ? "We picked the right version for your computer." : "Not your computer? Pick it below.";
     if (p.soon) {
-      html += '<div class="dl-card dl-soon"><span class="dl-os" aria-hidden="true">' + ICONS[os] + "</span>" +
-        '<div class="dl-info"><strong>S-CLAW for ' + esc(NAMES[os]) + ' <span class="badge badge-soon">Coming soon</span></strong>' +
-        "<span>The phone app is on the way. For now, S-CLAW runs on Windows, Mac and Linux.</span></div></div>";
+      dlBox.innerHTML = '<div class="dl-card dl-soon"><span class="dl-os" aria-hidden="true">' + ICONS[os] + "</span>" +
+        '<div class="dl-info"><strong>Android app <span class="badge badge-soon">Coming soon</span></strong>' +
+        "<span>S-CLAW runs on your computer for now. Open this page on your Windows, Mac or Linux computer to download it.</span></div></div>";
+      installCards.innerHTML = '<li class="ic-empty">Install steps appear here when you pick a computer.</li>';
+      document.getElementById("step2").classList.add("muted");
+      document.getElementById("step3").classList.add("muted");
+      return;
     }
-    (p.builds || []).forEach(function (b) {
-      html +=
-        '<div class="dl-card rec">' +
-          '<span class="dl-os" aria-hidden="true">' + ICONS[os] + "</span>" +
-          '<div class="dl-info"><strong>S-CLAW ' + esc(b.name) + "</strong>" +
-          "<span>" + esc(b.note) + (b.size ? " · " + esc(b.size) : "") + "</span></div>" +
-          '<a class="btn btn-primary btn-shine" href="' + esc(b.url) + '">' + DL_ICON +
-          "Download" + (b.size ? " (" + esc(b.size) + ")" : "") + "</a>" +
-        "</div>";
-    });
-    var stepsEl = document.getElementById("dlSteps");
-    if (stepsEl) {
-      if (p.steps && p.steps.length) {
-        // steps are trusted HTML written in downloads.js
-        stepsEl.innerHTML = "<h3>Installing takes a minute</h3><ol>" + p.steps.map(function (st) { return "<li>" + st + "</li>"; }).join("") + "</ol>";
-        stepsEl.hidden = false;
-      } else stepsEl.hidden = true;
-    }
-    panel.innerHTML = html;
-    panel.classList.remove("fade"); void panel.offsetWidth; panel.classList.add("fade");
-  }
-
-  tabs.forEach(function (t, idx) {
-    t.addEventListener("click", function () { render(t.dataset.os); });
-    t.addEventListener("keydown", function (e) {
-      var n = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-      if (!n) return;
-      var next = tabs[(idx + n + tabs.length) % tabs.length];
-      next.focus(); render(next.dataset.os);
-    });
-  });
-
-  var os = detectOS();
-  if (panel) render(os && D[os] && !(location.hash === "#brains") ? os : "windows");
-
-  /* ---------- brain downloads ---------- */
-  var brainGrid = document.getElementById("brainGrid");
-  if (brainGrid && D.brains) {
-    brainGrid.innerHTML = D.brains.map(function (br) {
-      var many = br.files.length;
-      return '<div class="brain-card' + (br.recommended ? " rec" : "") + '">' +
-        '<div class="brain-top"><strong>' + esc(br.name) + "</strong>" +
-        (br.recommended ? '<span class="badge">Most laptops</span>' : "") + "</div>" +
-        '<p class="brain-fit">' + esc(br.fits) + "</p>" +
-        '<p class="brain-size">' + esc(br.size) + " · " + many + " files — download all</p>" +
-        '<ul class="brain-files">' + br.files.map(function (f, i) {
-          var label = /mmproj/.test(f) ? "Vision file" : many > 2 ? "Part " + (i + 1) : "Brain file";
-          return '<li><a class="file-btn" href="' + esc(D.brainBase + f) + '">' + DL_ICON +
-            "<span><b>" + esc(label) + "</b><small>" + esc(f) + "</small></span></a></li>";
-        }).join("") + "</ul></div>";
+    document.getElementById("step2").classList.remove("muted");
+    document.getElementById("step3").classList.remove("muted");
+    dlBox.innerHTML =
+      '<div class="dl-card rec">' +
+        '<span class="dl-os" aria-hidden="true">' + ICONS[os] + "</span>" +
+        '<div class="dl-info"><strong>S-CLAW for ' + esc(p.name) + "</strong>" +
+        "<span>" + esc(p.label) + (p.size ? " · " + esc(p.size) : "") + "</span></div>" +
+        '<a class="btn btn-primary btn-shine btn-dl" href="' + esc(p.url) + '">' + DL_ICON +
+        "Download" + (p.size ? " · " + esc(p.size) : "") + "</a>" +
+      "</div>" + (p.note ? '<p class="dl-note">' + esc(p.note) + "</p>" : "");
+    // install steps (text is trusted HTML from downloads.js)
+    installCards.innerHTML = p.install.map(function (st, i) {
+      return '<li class="ic"><div class="ic-vis">' + (VIS[st.visual] ? VIS[st.visual](os) : "") + "</div>" +
+        '<div class="ic-txt"><span class="ic-n">' + (i + 1) + "</span><h3>" + esc(st.title) + "</h3><p>" + st.text + "</p></div></li>";
     }).join("");
+    dlBox.classList.remove("fade"); void dlBox.offsetWidth; dlBox.classList.add("fade");
   }
 
-  // Hero button: download straight away for the visitor's device
-  if (os && D[os] && !D[os].soon && D[os].builds && D[os].builds[0]) {
-    var b = D[os].builds[0];
+  if (osPick) {
+    var btns = Array.prototype.slice.call(osPick.querySelectorAll("button"));
+    btns.forEach(function (b, idx) {
+      b.addEventListener("click", function () { pickOS(b.dataset.os); });
+      b.addEventListener("keydown", function (e) {
+        var n = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+        if (!n) return; e.preventDefault();
+        var next = btns[(idx + n + btns.length) % btns.length]; next.focus(); pickOS(next.dataset.os);
+      });
+    });
+    pickOS(!onPhone && detected && D[detected] ? detected : "windows");
+  }
+
+  /* offline brains: one question, then only the files needed */
+  var ramPick = document.getElementById("ramPick");
+  var brainBox = document.getElementById("brainBox");
+  function pickBrain(id) {
+    var br = D.brains.filter(function (b) { return b.id === id; })[0]; if (!br) return;
+    Array.prototype.forEach.call(ramPick.querySelectorAll("button"), function (b) { b.setAttribute("aria-checked", String(b.dataset.id === id)); });
+    var many = br.files.length;
+    brainBox.innerHTML =
+      '<div class="bb-head"><div><p class="bb-k">You need the</p><p class="bb-name">' + esc(br.name) + ' brain</p></div><span class="bb-size">' + esc(br.size) + " · " + many + " files</span></div>" +
+      '<ol class="bb-steps">' +
+        '<li><b>Download all ' + many + ' files</b> below (on any computer with internet).' +
+          '<ul class="brain-files">' + br.files.map(function (f, i) {
+            var label = /mmproj/.test(f) ? "Vision file" : many > 2 ? "Part " + (i + 1) : "Brain file";
+            return '<li><a class="file-btn" href="' + esc(D.brainBase + f) + '">' + DL_ICON + "<span><b>" + esc(label) + "</b><small>" + esc(f) + "</small></span></a></li>";
+          }).join("") + "</ul></li>" +
+        "<li>Put them <b>all in one folder</b> and copy that folder to the computer (a flash drive works).</li>" +
+        "<li>Open S-CLAW → <b>Settings → Claw's brain</b> and choose the <b>first file</b>. S-CLAW joins the pieces itself.</li>" +
+      "</ol>";
+  }
+  if (ramPick && D.brains) {
+    ramPick.innerHTML = D.brains.map(function (b) {
+      return '<button type="button" role="radio" aria-checked="false" data-id="' + esc(b.id) + '"><b>' + esc(b.ram) + "</b><small>" + esc(b.name) + " brain · " + esc(b.size) + "</small></button>";
+    }).join("");
+    Array.prototype.forEach.call(ramPick.querySelectorAll("button"), function (b) {
+      b.addEventListener("click", function () { pickBrain(b.dataset.id); });
+    });
+    pickBrain("standard");
+    if (location.hash === "#brains") document.getElementById("brains").open = true;
+  }
+
+  // Hero button on Home: download straight away for the visitor's computer
+  var os = detected;
+  if (os && D[os] && !D[os].soon && D[os].url) {
     var heroDl = document.getElementById("heroDl");
     if (heroDl) {
-    heroDl.href = b.url;
-    document.getElementById("heroDlText").textContent = "Download for " + NAMES[os];
-    document.getElementById("heroFine").innerHTML =
-      "Free · always the latest version · " + '<a href="/download" style="text-decoration:underline">Other devices</a>';
+      heroDl.href = D[os].url;
+      document.getElementById("heroDlText").textContent = "Download for " + NAMES[os];
+      document.getElementById("heroFine").innerHTML =
+        "Free" + (D[os].size ? " · " + esc(D[os].size) : "") + " · " + '<a href="/download" style="text-decoration:underline">Other computers &amp; setup guide</a>';
     }
   }
 

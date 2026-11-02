@@ -57,47 +57,100 @@
   </header>
 
   <main id="main">
-    <!-- DOWNLOAD -->
-    <section class="section first dl-page" id="download">
+    <section class="page-hero dl-hero">
+      <div class="page-glow" aria-hidden="true"></div>
       <div class="wrap">
-        <header class="sec-head">
-          <p class="eyebrow">Download</p>
-          <h1>Download, install, <span class="grad">start asking</span></h1>
-          <p class="sec-sub">No sign-in, no account. Every link gives you the newest version.</p>
-        </header>
-
-        <div class="tabs" role="tablist" aria-label="Choose your device">
-          <button role="tab" type="button" data-os="windows" aria-selected="true">Windows</button>
-          <button role="tab" type="button" data-os="mac" aria-selected="false">macOS</button>
-          <button role="tab" type="button" data-os="linux" aria-selected="false">Linux</button>
-          <button role="tab" type="button" data-os="android" aria-selected="false">Android</button>
-        </div>
-
-        <div class="dl-panel" id="dlPanel" role="tabpanel" aria-live="polite">
-          <!-- filled by app.js from downloads.js -->
-        </div>
-
-        <div class="install" id="dlSteps" aria-live="polite">
-          <!-- filled by app.js -->
-        </div>
-
-        <div class="brains" id="brains">
-          <div class="brains-head">
-            <div>
-              <h3>Installing offline or on several PCs?</h3>
-              <p>Most people can skip this — S-CLAW downloads its brain by itself on first start. Get a brain here only if the computer has no internet, or to set up many PCs without downloading again.</p>
-            </div>
-          </div>
-          <div class="brain-grid" id="brainGrid"><!-- filled by app.js --></div>
-          <ol class="brain-how">
-            <li>Download <b>every file</b> for the brain you pick.</li>
-            <li>Put them all in <b>one folder</b>.</li>
-            <li>In S-CLAW open <b>Settings → Claw's brain</b> and choose the <b>first file</b>. S-CLAW joins the pieces itself.</li>
-          </ol>
-        </div>
+        <p class="eyebrow">Download</p>
+        <h1>Get S-CLAW in <span class="grad">3 easy steps</span></h1>
+        <p class="lead">Free. No account. No setup choices. Download, install, and S-CLAW sets up the rest by itself.</p>
+        <ol class="mini-steps" aria-label="The three steps">
+          <li><span>1</span>Download</li>
+          <li><span>2</span>Install</li>
+          <li><span>3</span>Open &amp; ask</li>
+        </ol>
       </div>
     </section>
 
+    <section class="section first">
+      <div class="wrap guide">
+
+        <!-- STEP 1 -->
+        <article class="g-step" id="step1">
+          <div class="g-num" aria-hidden="true">1</div>
+          <div class="g-body">
+            <h2>Download S-CLAW</h2>
+            <p class="g-sub" id="osLine">We picked the right version for your computer.</p>
+            <div class="os-pick" role="radiogroup" aria-label="Your computer" id="osPick">
+              <button type="button" role="radio" data-os="windows">Windows</button>
+              <button type="button" role="radio" data-os="mac">Mac</button>
+              <button type="button" role="radio" data-os="linux">Linux</button>
+              <button type="button" role="radio" data-os="android">Android phone</button>
+            </div>
+            <div id="dlBox" class="dl-box" aria-live="polite"><!-- filled by app.js --></div>
+          </div>
+        </article>
+
+        <!-- STEP 2 -->
+        <article class="g-step" id="step2">
+          <div class="g-num" aria-hidden="true">2</div>
+          <div class="g-body">
+            <h2>Install it</h2>
+            <p class="g-sub">Takes about a minute. Here's exactly what you'll see.</p>
+            <ol class="install-cards" id="installCards"><!-- filled by app.js --></ol>
+          </div>
+        </article>
+
+        <!-- STEP 3 -->
+        <article class="g-step" id="step3">
+          <div class="g-num" aria-hidden="true">3</div>
+          <div class="g-body">
+            <h2>Open S-CLAW and let it set itself up</h2>
+            <p class="g-sub">The first time it opens, S-CLAW checks your computer and offers the brain that suits it. Just press <b>Download</b> and wait — nothing to choose.</p>
+            <div class="setup-demo">
+              <div class="mock-app" aria-hidden="true">
+                <div class="mock-bar"><span class="orb orb-xs"><i></i><i></i><i></i></span> S-CLAW</div>
+                <div class="mock-body">
+                  <p class="mock-title">Give Claw a brain</p>
+                  <p class="mock-text">Recommended for this computer</p>
+                  <div class="mock-brain"><b>Standard</b><span>3.3 GB · fits 8 GB memory</span><span class="mock-btn">Download</span></div>
+                  <div class="mock-progress"><i></i></div>
+                </div>
+              </div>
+              <ul class="setup-points">
+                <li><b>One-time download.</b> The brain is the part that thinks. After this, S-CLAW works even without internet.</li>
+                <li><b>Use Wi-Fi if you can.</b> It's 2–6 GB depending on your computer.</li>
+                <li><b>Then just type.</b> Press the quick bar at the top of your screen and ask, e.g. “Reply to Mum on WhatsApp: I'll call at 7”.</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <p class="done-line"><span class="done-tick" aria-hidden="true">✓</span> That's it — you're ready. <a href="/how-it-works">See what to ask S-CLAW →</a></p>
+
+        <!-- OFFLINE / MANY PCS -->
+        <details class="offline" id="brains">
+          <summary>
+            <span class="off-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 4-2.4M19 13a10 10 0 0 0-2.6-1.9M2 9.5a15 15 0 0 1 5-3M22 9.5A15 15 0 0 0 12 5"/></svg></span>
+            <span><b>Installing on a computer with no internet?</b><small>Or setting up many PCs? Download the brain here instead. Most people can skip this.</small></span>
+          </summary>
+          <div class="off-body">
+            <p class="off-q">How much memory (RAM) does that computer have?</p>
+            <div class="ram-pick" role="radiogroup" aria-label="Computer memory" id="ramPick"><!-- filled by app.js --></div>
+            <details class="ram-help">
+              <summary>How do I check my memory?</summary>
+              <ul>
+                <li><b>Windows:</b> press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Esc</kbd> → <b>Performance</b> → <b>Memory</b>. Or Settings → System → About → “Installed RAM”.</li>
+                <li><b>Mac:</b> Apple menu → <b>About This Mac</b> → “Memory”.</li>
+                <li><b>Linux:</b> run <code>free -h</code> and look at “Mem total”.</li>
+              </ul>
+            </details>
+            <div id="brainBox" class="brain-box" aria-live="polite"><!-- filled by app.js --></div>
+          </div>
+        </details>
+
+        <p class="help-line">Stuck? Read the <a href="/faq">FAQ</a> — most answers are there.</p>
+      </div>
+    </section>
   </main>
 
   <footer class="foot">
