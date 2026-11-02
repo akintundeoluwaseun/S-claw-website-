@@ -454,3 +454,14 @@ h1 { font-size: clamp(38px, 5vw, 66px); }
 /* lighter motion on touch / small screens */
 @media (hover: none) { .tilt > * { transform: none; } .btn-shine::after { animation-duration: 6s; } }
 @media (max-width: 760px) { .stage { height: 480px; } }
+
+/* download started toast */
+.dl-toast { position: fixed; left: 50%; bottom: 24px; z-index: 200; display: flex; align-items: center; gap: 14px; max-width: calc(100% - 32px);
+  padding: 14px 20px 14px 14px; border-radius: 20px; background: var(--surface); border: 1px solid color-mix(in srgb, #3ddc97 50%, transparent);
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,.6); translate: -50% 140%; opacity: 0; transition: translate .45s var(--ease), opacity .3s; }
+.dl-toast.show { translate: -50% 0; opacity: 1; }
+.dl-toast-ico { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(61,220,151,.18); color: #3ddc97; flex: none; }
+.dl-toast-ico svg { width: 20px; height: 20px; stroke-width: 2.6; }
+.dl-toast b { display: block; font-size: 15px; }
+.dl-toast small { display: block; color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.dl-toast { width: min(440px, calc(100% - 32px)); }

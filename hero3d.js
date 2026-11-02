@@ -118,353 +118,458 @@ function start() {
   }
 
   /* ------------------------------------------------------------------ */
-  /* the tasks S-CLAW performs on screen                                 */
+  /* the tasks — shown on the laptop as a fast motion graphic            */
   /* ------------------------------------------------------------------ */
   const TASKS = [
-    { cmd: "Reply to Mum on WhatsApp: I'll call at 7", steps: ["Open WhatsApp", "Find the chat “Mum”", "Type the message"],
-      ask: "Send “I'll call at 7” to Mum?", done: "Message sent to Mum", app: "chat" },
-    { cmd: "Email last month's invoice to Tunde", steps: ["Search Documents for invoices", "Open Invoice-October.pdf", "Attach it to a new email"],
-      ask: "Send the email to Tunde?", done: "Email sent with the invoice", app: "files" },
-    { cmd: "Book 30 min with Ada on Friday afternoon", steps: ["Check your calendar", "Free slot found: Fri 2:00 PM", "Draft “Meet Ada”"],
-      ask: "Add “Meet Ada” Fri 2:00 PM?", done: "Added to your calendar", app: "cal" },
+    { cmd: "Reply to Mum on WhatsApp", accent: "#25d366", accent2: "#0fb5a5", app: "chat",
+      steps: ["Open WhatsApp", "Find “Mum”", "Type the reply"],
+      ask: "Send “I'll call at 7”?", done: "Message sent", icon: "chat" },
+    { cmd: "Email the October invoice to Tunde", accent: "#ff6b6b", accent2: "#ff9a5a", app: "mail",
+      steps: ["Find the invoice", "Attach the PDF", "Write the email"],
+      ask: "Send email to Tunde?", done: "Email sent", icon: "mail" },
+    { cmd: "Book 30 min with Ada on Friday", accent: "#6e8bff", accent2: "#b38cff", app: "cal",
+      steps: ["Check calendar", "Find a free slot", "Add the event"],
+      ask: "Add Fri, 2:00 PM?", done: "Meeting booked", icon: "cal" },
   ];
-  const T_TASK = 8.4;            // seconds per task
-  const T_TYPE = [0.15, 1.7];    // typing the command
-  const T_STEP0 = 1.95, T_STEP = 0.8;
-  const T_ASK = 4.45, T_CUR = [4.6, 5.35], T_CLICK = 5.45, T_DONE = 5.7;
+
+  // timeline (seconds) for one task
+  const T_TASK = 6.6;
+  const T_TYPE = [0.15, 1.05];
+  const T_STEP0 = 1.3, T_STEP = 0.9;
+  const T_APP = 2.0, T_CHECK = [2.65, 3.25, 3.85];
+  const T_ASK = 4.0, T_CLICK = 4.55, T_DONE = 4.9, T_WIPE = 6.2;
 
   function phaseOf(t) {
-    return {
-      typed: clamp01((t - T_TYPE[0]) / (T_TYPE[1] - T_TYPE[0])),
-      step: clamp01((t - T_STEP0) / (T_STEP * 3)) * 3, // 0..3
-      ask: t >= T_ASK && t < T_DONE + 0.2 ? clamp01((t - T_ASK) / 0.35) : 0,
-      cur: ease(clamp01((t - T_CUR[0]) / (T_CUR[1] - T_CUR[0]))),
-      click: t >= T_CLICK ? clamp01((t - T_CLICK) / 0.45) : 0,
-      done: t >= T_DONE ? clamp01((t - T_DONE) / 0.4) : 0,
-      fadeOut: t > T_TASK - 0.5 ? clamp01((t - (T_TASK - 0.5)) / 0.5) : 0,
-    };
+    return { done: t >= T_DONE ? clamp01((t - T_DONE) / 0.4) : 0 };
   }
 
+  const easeOutBack = (x) => { x = clamp01(x); const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const easeOutExpo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * clamp01(x)));
+  const easeInOut = (x) => ease(x);
+  const seg = (t, a, b) => clamp01((t - a) / (b - a));
+
   /* ------------------------------------------------------------------ */
-  /* laptop screen UI (drawn every frame)                                */
+  /* laptop screen (drawn ~30 times a second)                            */
   /* ------------------------------------------------------------------ */
   const SW = 1280, SH = 800, SCALE = SMALL ? 0.6 : 0.75;
   const screenTex = makeCanvasTex(Math.round(SW * SCALE), Math.round(SH * SCALE));
+  let screenOn = 0; // 0..1, fades the screen in after the lid opens
+
+  function icon(ctx, kind, x, y, s, color) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(s / 24, s / 24);
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2.2; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath();
+    if (kind === "chat") { ctx.moveTo(4, 18); ctx.lineTo(5, 14.5); ctx.arc(12, 11, 8, 2.6, 2.2 + Math.PI * 2 - 0.3); ctx.closePath(); }
+    else if (kind === "mail") { rr(ctx, 3, 6, 18, 13, 3); ctx.moveTo(4, 8); ctx.lineTo(12, 13.5); ctx.lineTo(20, 8); }
+    else { rr(ctx, 3.5, 5, 17, 15, 3); ctx.moveTo(3.5, 10); ctx.lineTo(20.5, 10); ctx.moveTo(8, 3); ctx.lineTo(8, 7); ctx.moveTo(16, 3); ctx.lineTo(16, 7); }
+    ctx.stroke(); ctx.restore();
+  }
+
+  function drawCursor(ctx, x, y, a) {
+    ctx.save(); ctx.globalAlpha *= a; ctx.translate(x, y); ctx.scale(1.5, 1.5);
+    ctx.beginPath();
+    ctx.moveTo(0, 0); ctx.lineTo(0, 30); ctx.lineTo(8, 23); ctx.lineTo(14, 36); ctx.lineTo(19, 34); ctx.lineTo(13, 21); ctx.lineTo(23, 21); ctx.closePath();
+    ctx.fillStyle = "#fff"; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = "#0b0c12"; ctx.stroke();
+    ctx.restore();
+  }
+
+  // app window rectangle
+  const AX = 560, AY = 196, AW = 650, AH = 500;
+
+  function cursorPath(task, t) {
+    // keyframes: [time, x, y]
+    const K = {
+      chat: [[2.0, 900, 640], [2.45, 700, 330], [2.9, 700, 330], [3.3, 880, 640], [3.95, 880, 640]],
+      mail: [[2.0, 900, 640], [2.4, 760, 420], [2.9, 760, 420], [3.25, 1000, 600], [3.95, 1000, 600]],
+      cal:  [[2.0, 700, 640], [2.5, 1110, 520], [3.0, 1110, 520], [3.4, 1110, 470], [3.95, 1110, 470]],
+    }[task.app].concat([[4.15, 900, 600], [4.5, 812, 520]]);
+    if (t <= K[0][0]) return [K[0][1], K[0][2]];
+    for (let i = 1; i < K.length; i++) {
+      if (t <= K[i][0]) {
+        const u = easeInOut(seg(t, K[i - 1][0], K[i][0]));
+        return [lerp(K[i - 1][1], K[i][1], u), lerp(K[i - 1][2], K[i][2], u)];
+      }
+    }
+    return [K[K.length - 1][1], K[K.length - 1][2]];
+  }
 
   function drawScreen(time, taskIdx, t) {
-    const ctx = screenTex.ctx, task = TASKS[taskIdx], ph = phaseOf(t);
+    const ctx = screenTex.ctx, task = TASKS[taskIdx];
     ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
-    // wallpaper
+    ctx.globalAlpha = 1;
+
+    /* ---- living background ---- */
     const bg = ctx.createLinearGradient(0, 0, SW, SH);
-    bg.addColorStop(0, "#141a33"); bg.addColorStop(0.55, "#1d1636"); bg.addColorStop(1, "#2a1626");
+    bg.addColorStop(0, "#0d1022"); bg.addColorStop(1, "#160f24");
     ctx.fillStyle = bg; ctx.fillRect(0, 0, SW, SH);
-    // soft colour blobs on the wallpaper
-    [["#6e8bff", 200, 160], ["#b38cff", 1080, 220], ["#ff8a6b", 900, 760]].forEach(([c, x, y], i) => {
-      const g = ctx.createRadialGradient(x + Math.sin(time * 0.3 + i) * 40, y, 0, x, y, 420);
-      g.addColorStop(0, c + "55"); g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, SW, SH);
-    });
-
-    // app window
-    const wx = 40, wy = 34, ww = SW - 80, wh = SH - 96;
-    ctx.save();
-    ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
-    rr(ctx, wx, wy, ww, wh, 26); ctx.fillStyle = "#10121a"; ctx.fill();
+    const g1 = ctx.createRadialGradient(260 + Math.sin(time * 0.7) * 80, 220, 0, 260, 220, 520);
+    g1.addColorStop(0, task.accent + "40"); g1.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g1; ctx.fillRect(0, 0, SW, SH);
+    const g2 = ctx.createRadialGradient(1050, 650 + Math.cos(time * 0.6) * 60, 0, 1050, 650, 560);
+    g2.addColorStop(0, task.accent2 + "38"); g2.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g2; ctx.fillRect(0, 0, SW, SH);
+    // moving perspective floor lines
+    ctx.save(); ctx.strokeStyle = "rgba(255,255,255,.05)"; ctx.lineWidth = 1.5;
+    for (let i = 0; i < 9; i++) {
+      const z = ((i / 9) + time * 0.12) % 1, y = 560 + Math.pow(z, 2) * 240;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(SW, y); ctx.stroke();
+    }
+    for (let i = -8; i <= 8; i++) { ctx.beginPath(); ctx.moveTo(SW / 2 + i * 40, 560); ctx.lineTo(SW / 2 + i * 190, SH); ctx.stroke(); }
     ctx.restore();
-    rr(ctx, wx, wy, ww, wh, 26); ctx.strokeStyle = "rgba(255,255,255,.08)"; ctx.lineWidth = 2; ctx.stroke();
 
-    // title bar
-    orbGlyph(ctx, wx + 40, wy + 34, 15, time);
-    ctx.fillStyle = "#ededf0"; ctx.font = `700 22px ${DISPLAY}`; ctx.textBaseline = "middle";
-    ctx.fillText("S-CLAW", wx + 66, wy + 35);
-    ctx.font = `500 17px ${FONT}`; ctx.fillStyle = "#3ddc97";
-    ctx.beginPath(); ctx.arc(wx + ww - 196, wy + 35, 6, 0, 7); ctx.fill();
-    ctx.fillStyle = "#a6a7ae"; ctx.fillText("Local brain · offline", wx + ww - 182, wy + 35);
-    ctx.fillStyle = "rgba(255,255,255,.06)"; ctx.fillRect(wx, wy + 68, ww, 2);
+    /* ---- top bar ---- */
+    orbGlyph(ctx, 52, 44, 16, time * 1.4);
+    ctx.textBaseline = "middle"; ctx.textAlign = "left";
+    ctx.font = `700 24px ${DISPLAY}`; ctx.fillStyle = "#fff"; ctx.fillText("S-CLAW", 80, 45);
+    const working = t < T_DONE;
+    rr(ctx, SW - 300, 26, 256, 38, 19); ctx.fillStyle = "rgba(255,255,255,.07)"; ctx.fill();
+    ctx.fillStyle = working ? task.accent : "#3ddc97";
+    ctx.beginPath(); ctx.arc(SW - 278, 45, 7 + (working ? Math.sin(time * 8) * 1.5 : 0), 0, 7); ctx.fill();
+    ctx.font = `600 18px ${FONT}`; ctx.fillStyle = "#e9eaf3";
+    ctx.fillText(working ? "Working on your PC" : "All steps checked", SW - 260, 46);
 
-    const alpha = 1 - ph.fadeOut;
-    ctx.save(); ctx.globalAlpha = alpha;
-
-    /* ---- left: command + plan ---- */
-    const lx = wx + 34, lw = 600;
-    // command bar
-    const by = wy + 98;
-    rr(ctx, lx, by, lw, 66, 33);
-    const cbg = ctx.createLinearGradient(lx, by, lx + lw, by);
-    cbg.addColorStop(0, "rgba(110,139,255,.16)"); cbg.addColorStop(1, "rgba(179,140,255,.12)");
-    ctx.fillStyle = cbg; ctx.fill();
-    ctx.strokeStyle = "rgba(140,160,255,.45)"; ctx.lineWidth = 2; ctx.stroke();
-    orbGlyph(ctx, lx + 36, by + 33, 14, time * 1.6);
-    const shown = task.cmd.slice(0, Math.round(task.cmd.length * ph.typed));
-    ctx.font = `500 21px ${FONT}`; ctx.fillStyle = "#f2f3f7";
-    ctx.fillText(shown, lx + 62, by + 34);
-    if (ph.typed < 1 || Math.floor(time * 2) % 2 === 0) {
+    /* ---- A: the command, typed big ---- */
+    const pillIn = easeOutBack(seg(t, 0.0, 0.35));
+    const toTop = easeOutExpo(seg(t, T_STEP0 - 0.1, T_STEP0 + 0.5));
+    const typed = seg(t, T_TYPE[0], T_TYPE[1]);
+    const shown = task.cmd.slice(0, Math.round(task.cmd.length * typed));
+    ctx.save();
+    const pcx = lerp(SW / 2, SW / 2, toTop), pcy = lerp(380, 132, toTop), ps = lerp(1, 0.62, toTop) * (0.6 + 0.4 * pillIn);
+    ctx.translate(pcx, pcy); ctx.scale(ps, ps); ctx.globalAlpha = clamp01(pillIn * 1.5);
+    ctx.font = `700 50px ${DISPLAY}`;
+    const fullW = ctx.measureText(task.cmd).width;
+    const pw = fullW + 170, ph2 = 110;
+    // glow
+    ctx.shadowColor = task.accent; ctx.shadowBlur = 50 * (1 - toTop * 0.6);
+    rr(ctx, -pw / 2, -ph2 / 2, pw, ph2, 55);
+    const pg = ctx.createLinearGradient(-pw / 2, 0, pw / 2, 0);
+    pg.addColorStop(0, "rgba(28,32,58,.96)"); pg.addColorStop(1, "rgba(38,26,58,.96)");
+    ctx.fillStyle = pg; ctx.fill(); ctx.shadowBlur = 0;
+    // animated gradient border
+    const bgd = ctx.createLinearGradient(-pw / 2 + Math.sin(time * 2) * 200, 0, pw / 2, 0);
+    bgd.addColorStop(0, task.accent); bgd.addColorStop(0.5, "#b38cff"); bgd.addColorStop(1, task.accent2);
+    ctx.strokeStyle = bgd; ctx.lineWidth = 4; ctx.stroke();
+    orbGlyph(ctx, -pw / 2 + 58, 0, 24, time * 2);
+    ctx.fillStyle = "#fff"; ctx.textAlign = "left";
+    ctx.fillText(shown, -pw / 2 + 100, 3);
+    if (typed < 1 || (t < T_STEP0 && Math.floor(time * 3) % 2 === 0)) {
       const cw = ctx.measureText(shown).width;
-      ctx.fillStyle = "#8aa2ff"; ctx.fillRect(lx + 64 + cw, by + 20, 3, 28);
+      ctx.fillStyle = task.accent; ctx.fillRect(-pw / 2 + 106 + cw, -26, 5, 52);
+    }
+    ctx.restore();
+    // hint under the command
+    if (t < T_STEP0) {
+      ctx.save(); ctx.globalAlpha = seg(t, 0.4, 0.8) * (1 - seg(t, T_STEP0 - 0.3, T_STEP0));
+      ctx.textAlign = "center"; ctx.font = `500 24px ${FONT}`; ctx.fillStyle = "#a9adc6";
+      ctx.fillText("You type one sentence. S-CLAW does the rest.", SW / 2, 480);
+      ctx.restore();
     }
 
-    // plan
-    if (t > T_STEP0 - 0.3) {
-      const pa = clamp01((t - (T_STEP0 - 0.3)) / 0.3);
-      ctx.save(); ctx.globalAlpha = alpha * pa;
-      ctx.font = `600 15px ${FONT}`; ctx.fillStyle = "#8aa2ff";
-      ctx.fillText("PLAN", lx + 6, by + 106);
+    /* ---- B/C: plan steps fly out ---- */
+    if (t >= T_STEP0) {
       task.steps.forEach((s, i) => {
-        const y = by + 150 + i * 64;
-        const st = ph.step - i; // <0 pending, 0..1 running, >=1 done
-        rr(ctx, lx, y - 26, lw, 52, 16);
-        ctx.fillStyle = st >= 0 && st < 1 ? "rgba(110,139,255,.14)" : "rgba(255,255,255,.035)"; ctx.fill();
-        const cx = lx + 30;
-        if (st >= 1) {
-          ctx.fillStyle = "rgba(61,220,151,.18)"; ctx.beginPath(); ctx.arc(cx, y, 14, 0, 7); ctx.fill();
-          drawCheck(ctx, cx, y, 26, "#3ddc97");
-        } else if (st >= 0) {
-          ctx.strokeStyle = "rgba(255,255,255,.12)"; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, y, 12, 0, 7); ctx.stroke();
-          ctx.strokeStyle = "#8aa2ff"; ctx.beginPath(); ctx.arc(cx, y, 12, time * 7, time * 7 + 1.9); ctx.stroke();
-        } else {
-          ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, y, 12, 0, 7); ctx.stroke();
+        const a = easeOutBack(seg(t, T_STEP0 + 0.12 + i * 0.12, T_STEP0 + 0.62 + i * 0.12));
+        const x = lerp(SW / 2 - 200, 70, a), y = lerp(132, 250 + i * 128, a);
+        const doneAt = T_CHECK[i], isDone = t >= doneAt;
+        const active = !isDone && (i === 0 ? t >= T_APP - 0.2 : t >= T_CHECK[i - 1]);
+        ctx.save(); ctx.globalAlpha = clamp01(a * 1.4);
+        ctx.translate(x, y);
+        const pop = isDone ? 1 + 0.08 * Math.sin(Math.PI * seg(t, doneAt, doneAt + 0.25)) : 1;
+        ctx.scale(pop, pop);
+        rr(ctx, 0, 0, 440, 100, 26);
+        ctx.fillStyle = isDone ? "rgba(61,220,151,.12)" : active ? "rgba(255,255,255,.09)" : "rgba(255,255,255,.04)"; ctx.fill();
+        if (active) {
+          const sh = ctx.createLinearGradient(-200 + ((time * 600) % 900), 0, 100 + ((time * 600) % 900), 0);
+          sh.addColorStop(0, "rgba(255,255,255,0)"); sh.addColorStop(0.5, task.accent + "55"); sh.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = sh; ctx.fill();
         }
-        ctx.font = `500 19px ${FONT}`;
-        ctx.fillStyle = st >= 1 ? "#a6a7ae" : st >= 0 ? "#ffffff" : "#6d6f78";
-        ctx.fillText(s, cx + 30, y + 1);
-        if (st >= 1) { ctx.font = `600 14px ${FONT}`; ctx.fillStyle = "#3ddc97"; ctx.fillText("checked", lx + lw - 86, y + 1); }
+        ctx.lineWidth = 3; ctx.strokeStyle = isDone ? "rgba(61,220,151,.7)" : active ? task.accent : "rgba(255,255,255,.1)"; ctx.stroke();
+        // number / check bubble
+        ctx.beginPath(); ctx.arc(52, 50, 26, 0, 7);
+        ctx.fillStyle = isDone ? "#3ddc97" : active ? task.accent : "rgba(255,255,255,.1)"; ctx.fill();
+        if (isDone) drawCheck(ctx, 52, 50, 40 * easeOutBack(seg(t, doneAt, doneAt + 0.3)), "#06130d");
+        else if (active) { ctx.strokeStyle = "rgba(255,255,255,.9)"; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(52, 50, 14, time * 8, time * 8 + 4); ctx.stroke(); }
+        else { ctx.fillStyle = "#c9cbe0"; ctx.font = `700 24px ${DISPLAY}`; ctx.textAlign = "center"; ctx.fillText(String(i + 1), 52, 52); }
+        ctx.textAlign = "left"; ctx.font = `600 30px ${FONT}`;
+        ctx.fillStyle = isDone ? "#cfeee0" : active ? "#fff" : "#8d90a8";
+        ctx.fillText(s, 98, 52);
+        ctx.restore();
       });
-      ctx.restore();
     }
 
-    // approval card
-    const ay = by + 360;
-    if (ph.ask > 0 || ph.done > 0) {
+    /* ---- C: the app, working ---- */
+    if (t >= T_APP - 0.3) {
+      const a = easeOutBack(seg(t, T_APP - 0.3, T_APP + 0.25));
+      const p = seg(t, T_APP, T_ASK);
       ctx.save();
-      const show = ph.done > 0 ? 1 - ph.done : ease(ph.ask);
-      ctx.globalAlpha = alpha * show;
-      ctx.translate(0, (1 - show) * 18);
-      rr(ctx, lx, ay, lw, 120, 22);
-      ctx.fillStyle = "rgba(255,210,122,.09)"; ctx.fill();
-      ctx.strokeStyle = "rgba(255,210,122,.45)"; ctx.lineWidth = 2; ctx.stroke();
-      ctx.font = `600 14px ${FONT}`; ctx.fillStyle = "#f3b65c"; ctx.fillText("NEEDS YOUR OK", lx + 26, ay + 30);
-      ctx.font = `600 21px ${FONT}`; ctx.fillStyle = "#ffffff"; ctx.fillText(task.ask, lx + 26, ay + 64);
+      ctx.globalAlpha = clamp01(a * 1.3);
+      ctx.translate(AX + AW / 2, AY + AH / 2); ctx.scale(0.7 + 0.3 * a, 0.7 + 0.3 * a); ctx.rotate((1 - a) * 0.06);
+      ctx.translate(-AW / 2, -AH / 2);
+      ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 40; ctx.shadowOffsetY = 20;
+      rr(ctx, 0, 0, AW, AH, 30); ctx.fillStyle = "#121521"; ctx.fill();
+      ctx.shadowColor = "transparent";
+      ctx.lineWidth = 2; ctx.strokeStyle = "rgba(255,255,255,.1)"; ctx.stroke();
+      ctx.save(); rr(ctx, 0, 0, AW, AH, 30); ctx.clip();
+      // title bar
+      ctx.fillStyle = task.accent + "26"; ctx.fillRect(0, 0, AW, 76);
+      rr(ctx, 22, 16, 44, 44, 13); ctx.fillStyle = task.accent; ctx.fill();
+      icon(ctx, task.icon, 32, 26, 24, "#fff");
+      ctx.font = `700 26px ${DISPLAY}`; ctx.fillStyle = "#fff"; ctx.textAlign = "left";
+      ctx.fillText({ chat: "WhatsApp", mail: "Email", cal: "Calendar" }[task.app], 82, 40);
+      ["#ff5f57", "#febc2e", "#28c840"].forEach((c, k) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(AW - 90 + k * 26, 38, 8, 0, 7); ctx.fill(); });
+      if (task.app === "chat") drawChat(ctx, p, t, time, task);
+      else if (task.app === "mail") drawMail(ctx, p, t, time, task);
+      else drawCal(ctx, p, t, time, task);
+      ctx.restore();
+      ctx.restore();
+    }
+
+    /* ---- D: approval card ---- */
+    if (t >= T_ASK && t < T_DONE + 0.3) {
+      const a = easeOutBack(seg(t, T_ASK, T_ASK + 0.35)) * (1 - seg(t, T_DONE, T_DONE + 0.25));
+      ctx.save();
+      ctx.globalAlpha = clamp01(a);
+      ctx.fillStyle = "rgba(6,7,14,.55)"; ctx.fillRect(0, 0, SW, SH);
+      ctx.translate(SW / 2, 470 + (1 - a) * 80); ctx.scale(0.85 + 0.15 * a, 0.85 + 0.15 * a);
+      ctx.shadowColor = "#f3b65c"; ctx.shadowBlur = 40;
+      rr(ctx, -330, -120, 660, 220, 32); ctx.fillStyle = "#1b1a22"; ctx.fill(); ctx.shadowBlur = 0;
+      ctx.lineWidth = 3; ctx.strokeStyle = "rgba(243,182,92,.8)"; ctx.stroke();
+      ctx.textAlign = "center";
+      ctx.font = `700 18px ${FONT}`; ctx.fillStyle = "#f3b65c"; ctx.fillText("NEEDS YOUR OK", 0, -78);
+      ctx.font = `700 36px ${DISPLAY}`; ctx.fillStyle = "#fff"; ctx.fillText(task.ask, 0, -28);
       // buttons
-      const bx = lx + lw - 170, byy = ay + 78;
-      rr(ctx, bx - 120, byy, 108, 32, 16); ctx.fillStyle = "rgba(255,255,255,.08)"; ctx.fill();
-      ctx.font = `600 15px ${FONT}`; ctx.fillStyle = "#c9cad1"; ctx.fillText("Cancel", bx - 92, byy + 17);
-      const pressed = ph.click > 0 && ph.click < 1 ? 0.94 : 1;
-      ctx.save(); ctx.translate(bx + 72, byy + 16); ctx.scale(pressed, pressed);
-      rr(ctx, -72, -16, 144, 32, 16);
-      const ag = ctx.createLinearGradient(-72, 0, 72, 0); ag.addColorStop(0, "#6e8bff"); ag.addColorStop(1, "#b38cff");
-      ctx.fillStyle = ag; ctx.fill();
-      ctx.fillStyle = "#fff"; ctx.fillText("Approve", -30, 1);
+      rr(ctx, -250, 20, 200, 62, 31); ctx.fillStyle = "rgba(255,255,255,.08)"; ctx.fill();
+      ctx.font = `600 24px ${FONT}`; ctx.fillStyle = "#c9cad1"; ctx.fillText("Cancel", -150, 52);
+      const press = t > T_CLICK && t < T_CLICK + 0.18 ? 0.92 : 1;
+      ctx.save(); ctx.translate(140, 51); ctx.scale(press, press);
+      rr(ctx, -110, -31, 220, 62, 31);
+      const bgr = ctx.createLinearGradient(-110, 0, 110, 0); bgr.addColorStop(0, "#6e8bff"); bgr.addColorStop(1, "#b38cff");
+      ctx.fillStyle = bgr; ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.font = `700 24px ${FONT}`; ctx.fillText("Approve", 0, 2);
       ctx.restore();
+      ctx.restore();
+      if (t > T_CLICK) {
+        const r = seg(t, T_CLICK, T_CLICK + 0.45);
+        ctx.save(); ctx.globalAlpha = 1 - r; ctx.strokeStyle = "#fff"; ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.arc(SW / 2 + 140, 521, 20 + r * 90, 0, 7); ctx.stroke(); ctx.restore();
+      }
+    }
+
+    /* ---- cursor with motion trail ---- */
+    if (t >= T_APP && t < T_DONE) {
+      for (let k = 4; k >= 0; k--) {
+        const [cx, cy] = cursorPath(task, t - k * 0.035);
+        drawCursor(ctx, cx, cy, k === 0 ? 1 : 0.12 * (5 - k) / 5);
+      }
+    }
+
+    /* ---- E: done celebration ---- */
+    if (t >= T_DONE) {
+      const d = seg(t, T_DONE, T_DONE + 0.35);
+      ctx.save();
+      ctx.fillStyle = `rgba(8,9,18,${0.8 * d})`; ctx.fillRect(0, 0, SW, SH);
+      const cx = SW / 2, cy = 330;
+      // rings
+      for (let k = 0; k < 3; k++) {
+        const rp = seg(t, T_DONE + k * 0.12, T_DONE + 0.9 + k * 0.12);
+        ctx.globalAlpha = (1 - rp) * 0.7; ctx.strokeStyle = k === 1 ? task.accent : "#3ddc97"; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.arc(cx, cy, 110 + rp * 260, 0, 7); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      // big circle + drawn tick
+      const cs = easeOutBack(seg(t, T_DONE, T_DONE + 0.4));
+      ctx.save(); ctx.translate(cx, cy); ctx.scale(cs, cs);
+      ctx.shadowColor = "#3ddc97"; ctx.shadowBlur = 60;
+      const cg = ctx.createLinearGradient(-110, -110, 110, 110); cg.addColorStop(0, "#3ddc97"); cg.addColorStop(1, task.accent2);
+      ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(0, 0, 110, 0, 7); ctx.fill();
+      ctx.shadowBlur = 0;
+      const tk = easeOutExpo(seg(t, T_DONE + 0.15, T_DONE + 0.6));
+      ctx.strokeStyle = "#06130d"; ctx.lineWidth = 20; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      const P = [[-46, 4], [-12, 38], [52, -32]];
+      const L1 = Math.hypot(34, 34), L2 = Math.hypot(64, 70), Ltot = L1 + L2, Ld = tk * Ltot;
+      ctx.beginPath(); ctx.moveTo(P[0][0], P[0][1]);
+      if (Ld <= L1) ctx.lineTo(P[0][0] + 34 * Ld / L1, P[0][1] + 34 * Ld / L1);
+      else { ctx.lineTo(P[1][0], P[1][1]); const u = (Ld - L1) / L2; ctx.lineTo(P[1][0] + 64 * u, P[1][1] - 70 * u); }
+      ctx.stroke();
+      ctx.restore();
+      // confetti
+      const ct = t - T_DONE;
+      const cols = [task.accent, "#3ddc97", "#b38cff", "#ffd27a", "#ff8a6b", "#6e8bff"];
+      for (let i = 0; i < 70; i++) {
+        const ang = (i * 137.5) * Math.PI / 180, sp = 380 + (i * 53 % 260);
+        const x = cx + Math.cos(ang) * sp * ct, y = cy + Math.sin(ang) * sp * ct * 0.8 + 420 * ct * ct;
+        const life = 1 - seg(ct, 0.9, 1.6);
+        if (life <= 0) continue;
+        ctx.save(); ctx.globalAlpha = life; ctx.translate(x, y); ctx.rotate(ct * (6 + i % 5));
+        ctx.fillStyle = cols[i % cols.length];
+        if (i % 3 === 0) { ctx.beginPath(); ctx.arc(0, 0, 6, 0, 7); ctx.fill(); } else ctx.fillRect(-8, -4, 16, 8);
+        ctx.restore();
+      }
+      // text
+      const tx = easeOutExpo(seg(t, T_DONE + 0.25, T_DONE + 0.7));
+      ctx.globalAlpha = tx; ctx.textAlign = "center";
+      ctx.font = `800 72px ${DISPLAY}`; ctx.fillStyle = "#fff";
+      ctx.fillText(task.done, cx, 540 + (1 - tx) * 40);
+      const sx2 = easeOutExpo(seg(t, T_DONE + 0.4, T_DONE + 0.85));
+      ctx.globalAlpha = sx2;
+      ctx.font = `600 28px ${FONT}`; ctx.fillStyle = "#a9f0cf";
+      ctx.fillText("3 steps · every step checked · 4.6 s", cx, 612 + (1 - sx2) * 30);
       ctx.restore();
     }
 
-    // done toast
-    if (ph.done > 0) {
-      ctx.save(); ctx.globalAlpha = alpha * ease(ph.done);
-      const ty = ay + 20 + (1 - ease(ph.done)) * 20;
-      rr(ctx, lx, ty, lw, 80, 22);
-      ctx.fillStyle = "rgba(61,220,151,.12)"; ctx.fill();
-      ctx.strokeStyle = "rgba(61,220,151,.5)"; ctx.lineWidth = 2; ctx.stroke();
-      ctx.fillStyle = "rgba(61,220,151,.22)"; ctx.beginPath(); ctx.arc(lx + 44, ty + 40, 20, 0, 7); ctx.fill();
-      drawCheck(ctx, lx + 44, ty + 40, 34, "#3ddc97");
-      ctx.font = `600 22px ${FONT}`; ctx.fillStyle = "#fff"; ctx.fillText(task.done, lx + 82, ty + 32);
-      ctx.font = `500 16px ${FONT}`; ctx.fillStyle = "#a6a7ae"; ctx.fillText("Every step checked", lx + 82, ty + 58);
+    /* ---- wipe transition between tasks ---- */
+    const wipeOut = seg(t, T_WIPE, T_TASK), wipeIn = 1 - seg(t, 0, 0.35);
+    const w = t >= T_WIPE ? easeInOut(wipeOut) : t < 0.35 ? -easeInOut(1 - wipeIn) : null;
+    if (w !== null) {
+      const next = TASKS[(taskIdx + (t >= T_WIPE ? 1 : 0)) % TASKS.length];
+      const x0 = t >= T_WIPE ? lerp(-SW * 1.4, 0, w) : lerp(0, SW * 1.4, -w);
+      ctx.save(); ctx.globalAlpha = 1;
+      const wg = ctx.createLinearGradient(x0, 0, x0 + SW * 1.4, 0);
+      wg.addColorStop(0, next.accent); wg.addColorStop(0.5, "#b38cff"); wg.addColorStop(1, next.accent2);
+      ctx.fillStyle = wg;
+      ctx.beginPath(); ctx.moveTo(x0 - 200, 0); ctx.lineTo(x0 + SW * 1.4, 0); ctx.lineTo(x0 + SW * 1.4 - 200, SH); ctx.lineTo(x0 - 400, SH); ctx.closePath(); ctx.fill();
       ctx.restore();
     }
 
-    /* ---- right: the app S-CLAW is operating ---- */
-    const ax = lx + lw + 36, aw = wx + ww - 34 - ax, ay0 = by, ah = wh - (by - wy) - 34;
-    ctx.save();
-    rr(ctx, ax, ay0, aw, ah, 20); ctx.fillStyle = "#171a24"; ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.07)"; ctx.lineWidth = 2; ctx.stroke();
-    rr(ctx, ax, ay0, aw, ah, 20); ctx.clip();
-    if (task.app === "chat") drawChatApp(ctx, ax, ay0, aw, ah, ph, t, time);
-    else if (task.app === "files") drawFilesApp(ctx, ax, ay0, aw, ah, ph, t, time);
-    else drawCalApp(ctx, ax, ay0, aw, ah, ph, t, time);
-    ctx.restore();
-
-    // cursor
-    let cx, cy;
-    const restX = ax + aw * 0.55, restY = ay0 + ah * 0.6;
-    const appTarget = appCursor(task.app, ax, ay0, aw, ah, ph);
-    const apX = lx + lw - 98, apY = ay + 94;
-    if (t < T_CUR[0]) { cx = appTarget[0]; cy = appTarget[1]; }
-    else { cx = lerp(appTarget[0], apX, ph.cur); cy = lerp(appTarget[1], apY, ph.cur); }
-    if (ph.done > 0) { cx = lerp(apX, restX, ease(ph.done)); cy = lerp(apY, restY, ease(ph.done)); }
-    if (ph.click > 0 && ph.click < 1) {
-      ctx.strokeStyle = `rgba(255,255,255,${0.6 * (1 - ph.click)})`; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(apX, apY, 10 + ph.click * 34, 0, 7); ctx.stroke();
-    }
-    drawCursor(ctx, cx, cy);
-    ctx.restore();
-
-    // taskbar
-    ctx.fillStyle = "rgba(10,11,16,.75)"; ctx.fillRect(0, SH - 46, SW, 46);
-    orbGlyph(ctx, SW / 2, SH - 23, 13, time);
-    ["#2b6cff", "#3ddc97", "#f3b65c", "#ff8a6b"].forEach((c, i) => {
-      rr(ctx, SW / 2 + 32 + i * 38, SH - 36, 26, 26, 7); ctx.fillStyle = c + "cc"; ctx.fill();
-    });
-    ctx.font = `500 16px ${FONT}`; ctx.fillStyle = "#a6a7ae"; ctx.fillText("7:42 PM", SW - 96, SH - 22);
-
+    // screen power-on fade
+    if (screenOn < 1) { ctx.fillStyle = `rgba(0,0,0,${1 - screenOn})`; ctx.fillRect(0, 0, SW, SH); }
     screenTex.tex.needsUpdate = true;
   }
 
-  function appCursor(app, ax, ay, aw, ah, ph) {
-    if (app === "chat") return [ax + aw * 0.5, ay + ah - 46 - (ph.step < 1 ? 280 : 0) * (1 - clamp01(ph.step - 1))];
-    if (app === "files") {
-      const row = Math.min(3, Math.floor(ph.step * 3));
-      return ph.step < 1 ? [ax + aw * 0.4, ay + 110 + row * 58] : ph.step < 2 ? [ax + aw * 0.4, ay + 110 + 3 * 58] : [ax + aw * 0.7, ay + ah - 70];
-    }
-    const col = ph.step < 1 ? Math.floor(ph.step * 5) : 4;
-    return [ax + 70 + col * ((aw - 80) / 5) + 30, ay + 120 + (ph.step < 1 ? ph.step * 200 : 5 * 52)];
-  }
-
-  function drawCursor(ctx, x, y) {
-    ctx.save(); ctx.translate(x, y);
-    ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
-    ctx.beginPath();
-    ctx.moveTo(0, 0); ctx.lineTo(0, 30); ctx.lineTo(8, 23); ctx.lineTo(14, 36); ctx.lineTo(19, 34); ctx.lineTo(13, 21); ctx.lineTo(23, 21); ctx.closePath();
-    ctx.fillStyle = "#fff"; ctx.fill();
-    ctx.shadowColor = "transparent"; ctx.lineWidth = 2; ctx.strokeStyle = "#111"; ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawChatApp(ctx, x, y, w, h, ph, t, time) {
-    ctx.fillStyle = "#0e1a17"; ctx.fillRect(x, y, w, h);
-    const open = clamp01(ph.step);
-    // header
-    ctx.fillStyle = "#14261f"; ctx.fillRect(x, y, w, 70);
-    ctx.fillStyle = "#25d366"; ctx.beginPath(); ctx.arc(x + 42, y + 35, 20, 0, 7); ctx.fill();
-    ctx.fillStyle = "#0e1a17"; ctx.font = `700 18px ${FONT}`; ctx.fillText("M", x + 35, y + 36);
-    ctx.fillStyle = "#e9edef"; ctx.font = `600 19px ${FONT}`;
-    ctx.fillText(open > 0.5 ? "Mum" : "WhatsApp", x + 74, y + 28);
-    ctx.fillStyle = "#8696a0"; ctx.font = `400 14px ${FONT}`;
-    ctx.fillText(open > 0.5 ? "online" : "Chats", x + 74, y + 50);
-    if (ph.step < 1.5) {
-      // chat list
-      ["Mum", "Tunde", "Shop group", "Ada"].forEach((n, i) => {
-        const ry = y + 90 + i * 66;
-        const hl = ph.step >= 0.6 && i === 0;
-        if (hl) { ctx.fillStyle = "rgba(37,211,102,.12)"; ctx.fillRect(x, ry - 8, w, 60); }
-        ctx.fillStyle = ["#25d366", "#6e8bff", "#f3b65c", "#ff8a6b"][i] + "55";
-        ctx.beginPath(); ctx.arc(x + 42, ry + 22, 20, 0, 7); ctx.fill();
-        ctx.fillStyle = "#e9edef"; ctx.font = `600 17px ${FONT}`; ctx.fillText(n, x + 74, ry + 12);
-        ctx.fillStyle = "#8696a0"; ctx.font = `400 14px ${FONT}`;
-        ctx.fillText(["Are you calling today?", "Send the invoice pls", "Stock arrived", "Friday works"][i], x + 74, ry + 34);
-      });
-      return;
-    }
-    // conversation
-    const bubble = (txt, right, by, a) => {
-      ctx.save(); ctx.globalAlpha *= a;
-      ctx.font = `400 17px ${FONT}`;
-      const tw = ctx.measureText(txt).width + 70;
-      const bx = right ? x + w - tw - 20 : x + 20;
-      rr(ctx, bx, by, tw, 46, 14); ctx.fillStyle = right ? "#005c4b" : "#202c33"; ctx.fill();
-      ctx.fillStyle = "#e9edef"; ctx.fillText(txt, bx + 16, by + 24);
-      ctx.fillStyle = "#8696a0"; ctx.font = `400 12px ${FONT}`; ctx.fillText(right ? "7:42" : "7:30", bx + tw - 50, by + 32);
-      if (right) { ctx.strokeStyle = "#53bdeb"; ctx.lineWidth = 2; drawCheck(ctx, bx + tw - 14, by + 30, 12, "#53bdeb"); drawCheck(ctx, bx + tw - 9, by + 30, 12, "#53bdeb"); }
+  /* ---- app contents (inside the app window, local coords) ---- */
+  function drawChat(ctx, p, t, time, task) {
+    ctx.fillStyle = "#0b141a"; ctx.fillRect(0, 76, AW, AH - 76);
+    // contact strip
+    ctx.fillStyle = "#25d366"; ctx.beginPath(); ctx.arc(52, 118, 24, 0, 7); ctx.fill();
+    ctx.fillStyle = "#06130d"; ctx.font = `800 22px ${FONT}`; ctx.textAlign = "center"; ctx.fillText("M", 52, 120);
+    ctx.textAlign = "left"; ctx.fillStyle = "#fff"; ctx.font = `700 24px ${FONT}`; ctx.fillText("Mum", 88, 110);
+    ctx.fillStyle = "#25d366"; ctx.font = `500 17px ${FONT}`; ctx.fillText(p > 0.3 && p < 0.9 ? "typing…" : "online", 88, 134);
+    const bubble = (txt, right, y, a, col) => {
+      if (a <= 0) return;
+      ctx.save(); ctx.globalAlpha *= clamp01(a);
+      ctx.font = `500 26px ${FONT}`;
+      const tw = ctx.measureText(txt).width + 60;
+      const x = right ? AW - tw - 28 : 28;
+      ctx.translate(right ? x + tw : x, y); ctx.scale(easeOutBack(a), easeOutBack(a)); ctx.translate(right ? -tw : 0, 0);
+      rr(ctx, 0, 0, tw, 58, 20); ctx.fillStyle = col; ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.fillText(txt, 22, 30);
       ctx.restore();
     };
-    bubble("Are you calling today?", false, y + 96, 1);
-    bubble("Let me know the time", false, y + 152, 1);
-    // input
-    const iy = y + h - 74;
-    rr(ctx, x + 16, iy, w - 32, 52, 26); ctx.fillStyle = "#202c33"; ctx.fill();
-    const msg = "I'll call at 7";
-    const typedN = ph.done > 0 ? 0 : Math.round(msg.length * clamp01(ph.step - 2));
-    ctx.font = `400 17px ${FONT}`;
-    ctx.fillStyle = typedN ? "#e9edef" : "#8696a0";
-    ctx.fillText(typedN ? msg.slice(0, typedN) : "Type a message", x + 38, iy + 27);
-    if (ph.done > 0) bubble(msg, true, y + 220 + (1 - ease(ph.done)) * 30, ease(ph.done));
+    bubble("Are you calling today?", false, 176, seg(t, 2.05, 2.35), "#202c33");
+    bubble("What time? 😊", false, 248, seg(t, 2.3, 2.6), "#202c33");
+    // input + typing
+    const msg = "I'll call at 7 ❤️";
+    const n = Math.round(msg.length * seg(t, 3.3, 3.9));
+    rr(ctx, 24, AH - 88, AW - 130, 64, 32); ctx.fillStyle = "#202c33"; ctx.fill();
+    ctx.font = `500 26px ${FONT}`; ctx.fillStyle = n && t < T_CLICK ? "#fff" : "#8696a0";
+    ctx.fillText(n && t < T_CLICK ? msg.slice(0, n) : "Type a message", 52, AH - 54);
+    ctx.fillStyle = "#25d366"; ctx.beginPath(); ctx.arc(AW - 64, AH - 56, 32, 0, 7); ctx.fill();
+    ctx.fillStyle = "#06130d"; ctx.beginPath(); ctx.moveTo(AW - 76, AH - 70); ctx.lineTo(AW - 46, AH - 56); ctx.lineTo(AW - 76, AH - 42); ctx.closePath(); ctx.fill();
+    // sent bubble after approval
+    bubble(msg + "  ✓✓", true, 322, seg(t, T_CLICK + 0.05, T_CLICK + 0.3), "#005c4b");
   }
 
-  function drawFilesApp(ctx, x, y, w, h, ph, t, time) {
-    ctx.fillStyle = "#151821"; ctx.fillRect(x, y, w, h);
-    ctx.fillStyle = "#1c2030"; ctx.fillRect(x, y, w, 64);
-    ctx.font = `600 18px ${FONT}`; ctx.fillStyle = "#e9eaf0";
-    const view = ph.done > 0 || ph.step >= 2 ? "mail" : ph.step >= 1 ? "pdf" : "files";
-    ctx.fillText(view === "mail" ? "New email" : view === "pdf" ? "Invoice-October.pdf" : "Documents › Invoices", x + 24, y + 33);
-    if (view === "files") {
-      const files = ["Invoice-July.pdf", "Invoice-August.pdf", "Invoice-September.pdf", "Invoice-October.pdf", "Receipts.xlsx"];
-      const hl = Math.min(3, Math.floor(ph.step * 4.5));
+  function drawMail(ctx, p, t, time, task) {
+    ctx.fillStyle = "#14161f"; ctx.fillRect(0, 76, AW, AH - 76);
+    const files = ["Invoice-August.pdf", "Invoice-September.pdf", "Invoice-October.pdf"];
+    const listA = 1 - seg(t, 2.9, 3.15);
+    if (listA > 0) {
+      ctx.save(); ctx.globalAlpha *= listA;
+      ctx.font = `600 20px ${FONT}`; ctx.fillStyle = "#8d90a8"; ctx.fillText("Documents › Invoices", 30, 118);
+      const hy = lerp(150, 150 + 2 * 92, easeInOut(seg(t, 2.05, 2.5)));
+      rr(ctx, 18, hy, AW - 36, 80, 20); ctx.fillStyle = "rgba(255,107,107,.18)"; ctx.fill();
+      ctx.strokeStyle = "rgba(255,107,107,.7)"; ctx.lineWidth = 2; ctx.stroke();
       files.forEach((f, i) => {
-        const ry = y + 84 + i * 58;
-        if (i === hl) { rr(ctx, x + 12, ry, w - 24, 50, 12); ctx.fillStyle = "rgba(110,139,255,.2)"; ctx.fill(); }
-        rr(ctx, x + 26, ry + 10, 26, 30, 5); ctx.fillStyle = f.endsWith("xlsx") ? "#3ddc97" : "#ff6b6b"; ctx.fill();
-        ctx.fillStyle = "#e9eaf0"; ctx.font = `500 16px ${FONT}`; ctx.fillText(f, x + 66, ry + 26);
-        ctx.fillStyle = "#7d8090"; ctx.font = `400 13px ${FONT}`; ctx.fillText(["Jul 31", "Aug 31", "Sep 30", "Oct 31", "Oct 31"][i], x + w - 80, ry + 26);
+        const y = 150 + i * 92;
+        rr(ctx, 40, y + 16, 38, 48, 8); ctx.fillStyle = "#ff6b6b"; ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.font = `800 12px ${FONT}`; ctx.fillText("PDF", 46, y + 46);
+        ctx.font = `600 26px ${FONT}`; ctx.fillStyle = "#fff"; ctx.fillText(f, 100, y + 42);
       });
-    } else if (view === "pdf") {
-      rr(ctx, x + 30, y + 84, w - 60, h - 110, 10); ctx.fillStyle = "#f6f6f8"; ctx.fill();
-      ctx.fillStyle = "#16181f"; ctx.font = `700 26px ${DISPLAY}`; ctx.fillText("INVOICE", x + 56, y + 128);
-      ctx.font = `400 14px ${FONT}`; ctx.fillStyle = "#666"; ctx.fillText("October 2026 · #INV-0310", x + 56, y + 156);
-      for (let i = 0; i < 5; i++) { ctx.fillStyle = "#e3e4ea"; ctx.fillRect(x + 56, y + 192 + i * 34, w - 112, 14); }
-      const sweep = clamp01(ph.step - 1);
-      ctx.fillStyle = "rgba(110,139,255,.25)"; ctx.fillRect(x + 50, y + 186, (w - 100) * sweep, 5 * 34);
-      ctx.fillStyle = "#16181f"; ctx.font = `700 20px ${FONT}`; ctx.fillText("Total  ₦ 485,000", x + 56, y + h - 64);
-    } else {
-      const rows = [["To", "Tunde"], ["Subject", "October invoice"]];
-      rows.forEach(([k, v], i) => {
-        const ry = y + 92 + i * 52;
-        ctx.fillStyle = "#7d8090"; ctx.font = `500 15px ${FONT}`; ctx.fillText(k, x + 26, ry + 18);
-        ctx.fillStyle = "#e9eaf0"; ctx.font = `500 17px ${FONT}`; ctx.fillText(v, x + 110, ry + 18);
-        ctx.fillStyle = "rgba(255,255,255,.06)"; ctx.fillRect(x + 20, ry + 38, w - 40, 2);
-      });
-      ctx.fillStyle = "#c9cad1"; ctx.font = `400 16px ${FONT}`;
-      ctx.fillText("Hi Tunde, please find October's invoice attached.", x + 26, y + 230);
-      const a = clamp01((ph.step - 2) * 2) || (ph.done > 0 ? 1 : 0);
-      ctx.save(); ctx.globalAlpha *= a;
-      rr(ctx, x + 26, y + 270, 250, 48, 12); ctx.fillStyle = "rgba(255,107,107,.14)"; ctx.fill();
-      rr(ctx, x + 38, y + 280, 22, 28, 4); ctx.fillStyle = "#ff6b6b"; ctx.fill();
-      ctx.fillStyle = "#e9eaf0"; ctx.font = `500 15px ${FONT}`; ctx.fillText("Invoice-October.pdf", x + 70, y + 295);
       ctx.restore();
-      if (ph.done > 0) {
-        ctx.save(); ctx.globalAlpha *= ease(ph.done);
-        rr(ctx, x + w - 150, y + h - 76, 124, 46, 23); ctx.fillStyle = "#3ddc97"; ctx.fill();
-        ctx.fillStyle = "#08130e"; ctx.font = `700 17px ${FONT}`; ctx.fillText("Sent ✓", x + w - 120, y + h - 52);
-        ctx.restore();
-      }
+    }
+    const mailA = seg(t, 3.0, 3.3);
+    if (mailA > 0) {
+      ctx.save(); ctx.globalAlpha *= mailA;
+      [["To", "Tunde"], ["Subject", "October invoice"]].forEach(([k, v], i) => {
+        const y = 122 + i * 60;
+        ctx.font = `500 22px ${FONT}`; ctx.fillStyle = "#8d90a8"; ctx.fillText(k, 30, y);
+        ctx.font = `600 26px ${FONT}`; ctx.fillStyle = "#fff"; ctx.fillText(v, 140, y);
+        ctx.fillStyle = "rgba(255,255,255,.07)"; ctx.fillRect(24, y + 24, AW - 48, 2);
+      });
+      const body = "Hi Tunde, here's October's invoice. Thanks!";
+      const n = Math.round(body.length * seg(t, 3.35, 3.95));
+      ctx.font = `500 25px ${FONT}`; ctx.fillStyle = "#dfe1ee"; ctx.fillText(body.slice(0, n), 30, 270);
+      ctx.restore();
+    }
+    // PDF flies into attachment slot
+    const fly = seg(t, 2.55, 3.1);
+    if (fly > 0) {
+      const e = easeInOut(fly);
+      const sx = 40, sy = 150 + 2 * 92 + 16, tx = 30, ty = 320;
+      const x = lerp(sx, tx, e), y = lerp(sy, ty, e) - Math.sin(e * Math.PI) * 90;
+      ctx.save(); ctx.translate(x, y); ctx.rotate(Math.sin(e * Math.PI) * -0.2);
+      rr(ctx, 0, 0, 330, 70, 18); ctx.fillStyle = "rgba(255,107,107,.22)"; ctx.fill();
+      ctx.strokeStyle = "#ff6b6b"; ctx.lineWidth = 2; ctx.stroke();
+      rr(ctx, 14, 12, 34, 46, 7); ctx.fillStyle = "#ff6b6b"; ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.font = `600 22px ${FONT}`; ctx.fillText("Invoice-October.pdf", 62, 42);
+      ctx.restore();
+    }
+    // send button
+    if (mailA > 0) {
+      const sent = t > T_CLICK;
+      rr(ctx, AW - 200, AH - 86, 172, 62, 31);
+      ctx.fillStyle = sent ? "#3ddc97" : "#ff6b6b"; ctx.fill();
+      ctx.fillStyle = sent ? "#06130d" : "#fff"; ctx.font = `700 24px ${FONT}`; ctx.textAlign = "center";
+      ctx.fillText(sent ? "Sent ✓" : "Send", AW - 114, AH - 52); ctx.textAlign = "left";
     }
   }
 
-  function drawCalApp(ctx, x, y, w, h, ph, t, time) {
-    ctx.fillStyle = "#151821"; ctx.fillRect(x, y, w, h);
-    ctx.fillStyle = "#e9eaf0"; ctx.font = `600 18px ${FONT}`; ctx.fillText("This week", x + 24, y + 34);
+  function drawCal(ctx, p, t, time, task) {
+    ctx.fillStyle = "#13151f"; ctx.fillRect(0, 76, AW, AH - 76);
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-    const gx = x + 64, gy = y + 70, cw = (w - 80) / 5, rh = 52;
+    const gx = 86, gy = 130, cw = (AW - 110) / 5, rh = 58;
     days.forEach((d, i) => {
-      ctx.fillStyle = i === 4 && ph.step >= 1 ? "#8aa2ff" : "#7d8090"; ctx.font = `600 14px ${FONT}`;
-      ctx.fillText(d, gx + i * cw + cw / 2 - 14, gy);
+      ctx.font = `700 22px ${FONT}`; ctx.textAlign = "center";
+      ctx.fillStyle = i === 4 && t > 2.75 ? "#8aa2ff" : "#8d90a8";
+      ctx.fillText(d, gx + i * cw + cw / 2, gy - 18);
     });
-    const hours = ["9", "10", "11", "12", "1", "2", "3", "4"];
-    hours.forEach((hr, j) => {
-      const ry = gy + 20 + j * rh;
-      ctx.fillStyle = "#5d6070"; ctx.font = `400 13px ${FONT}`; ctx.fillText(hr, x + 30, ry + 6);
-      ctx.fillStyle = "rgba(255,255,255,.05)"; ctx.fillRect(gx, ry, w - 80, 1);
+    ctx.textAlign = "left";
+    ["9", "10", "11", "12", "1", "2"].forEach((h, j) => {
+      ctx.font = `500 18px ${FONT}`; ctx.fillStyle = "#6c6f86"; ctx.fillText(h, 36, gy + j * rh + 30);
+      ctx.fillStyle = "rgba(255,255,255,.05)"; ctx.fillRect(gx, gy + j * rh, AW - 110, 2);
     });
-    const busy = [[0, 0, 2, "#6e8bff"], [1, 3, 1, "#b38cff"], [2, 1, 2, "#ff8a6b"], [3, 4, 2, "#6e8bff"], [4, 0, 2, "#f3b65c"], [4, 3, 1, "#b38cff"], [1, 6, 1, "#ff8a6b"]];
-    busy.forEach(([d, s, l, c]) => {
-      rr(ctx, gx + d * cw + 4, gy + 22 + s * rh, cw - 8, l * rh - 4, 8); ctx.fillStyle = c + "44"; ctx.fill();
-      ctx.fillStyle = c; ctx.fillRect(gx + d * cw + 4, gy + 24 + s * rh, 4, l * rh - 8);
+    const busy = [[0, 0, 2, "#6e8bff"], [1, 2, 1, "#b38cff"], [2, 0, 1, "#ff8a6b"], [2, 3, 2, "#6e8bff"], [3, 1, 2, "#f3b65c"], [4, 0, 2, "#b38cff"], [4, 3, 1, "#ff8a6b"], [0, 4, 2, "#f3b65c"], [1, 4, 1, "#6e8bff"]];
+    busy.forEach(([d, s, l, c], i) => {
+      const a = easeOutBack(seg(t, 2.0 + i * 0.03, 2.3 + i * 0.03));
+      if (a <= 0) return;
+      ctx.save(); ctx.globalAlpha *= clamp01(a);
+      rr(ctx, gx + d * cw + 6, gy + s * rh + 6, cw - 12, (l * rh - 12) * a, 12); ctx.fillStyle = c + "55"; ctx.fill();
+      ctx.fillStyle = c; ctx.fillRect(gx + d * cw + 6, gy + s * rh + 10, 5, Math.max(0, l * rh - 20) * a);
+      ctx.restore();
     });
-    // scanning sweep
-    if (ph.step < 1 && ph.step > 0) {
-      const sx = gx + (w - 80) * ph.step;
-      const g = ctx.createLinearGradient(sx - 80, 0, sx, 0); g.addColorStop(0, "rgba(110,139,255,0)"); g.addColorStop(1, "rgba(110,139,255,.35)");
-      ctx.fillStyle = g; ctx.fillRect(sx - 80, gy + 20, 80, rh * 8);
+    // scanner
+    const sc = seg(t, 2.25, 2.85);
+    if (sc > 0 && sc < 1) {
+      const x = gx + (AW - 110) * sc;
+      const g = ctx.createLinearGradient(x - 120, 0, x, 0); g.addColorStop(0, "rgba(110,139,255,0)"); g.addColorStop(1, "rgba(138,162,255,.55)");
+      ctx.fillStyle = g; ctx.fillRect(x - 120, gy, 120, rh * 6);
+      ctx.fillStyle = "#c6d2ff"; ctx.fillRect(x - 2, gy, 4, rh * 6);
     }
-    // the free slot: Fri 2 PM (row 5)
-    if (ph.step >= 1) {
-      const sx = gx + 4 * cw + 4, sy = gy + 22 + 5 * rh;
-      const pulse = 0.5 + 0.5 * Math.sin(time * 5);
-      if (ph.step < 2) { rr(ctx, sx, sy, cw - 8, rh - 4, 8); ctx.strokeStyle = `rgba(61,220,151,${0.5 + pulse * 0.5})`; ctx.lineWidth = 3; ctx.stroke(); }
-      if (ph.step >= 2) {
-        const solid = ph.done > 0;
-        rr(ctx, sx, sy, cw - 8, rh - 4, 8);
-        ctx.fillStyle = solid ? "#3ddc97" : "rgba(61,220,151,.18)"; ctx.fill();
-        if (!solid) { ctx.setLineDash([6, 5]); ctx.strokeStyle = "#3ddc97"; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); }
-        ctx.fillStyle = solid ? "#08130e" : "#3ddc97"; ctx.font = `700 13px ${FONT}`; ctx.fillText("Meet Ada", sx + 10, sy + 25);
+    // the free slot Fri 2pm (row 5)
+    const sx = gx + 4 * cw + 6, sy = gy + 5 * rh + 6, sw = cw - 12, sh = rh - 12;
+    if (t > 2.85) {
+      const pulse = 0.5 + 0.5 * Math.sin(time * 9);
+      if (t < 3.45) { rr(ctx, sx, sy, sw, sh, 12); ctx.lineWidth = 4; ctx.strokeStyle = `rgba(61,220,151,${0.5 + 0.5 * pulse})`; ctx.stroke(); }
+      else {
+        const g = easeOutBack(seg(t, 3.45, 3.8));
+        const solid = t > T_CLICK;
+        ctx.save(); ctx.translate(sx + sw / 2, sy + sh / 2); ctx.scale(g, g);
+        rr(ctx, -sw / 2, -sh / 2, sw, sh, 12);
+        ctx.fillStyle = solid ? "#3ddc97" : "rgba(61,220,151,.25)"; ctx.fill();
+        ctx.lineWidth = 3; ctx.strokeStyle = "#3ddc97"; ctx.stroke();
+        ctx.fillStyle = solid ? "#06130d" : "#3ddc97"; ctx.font = `800 18px ${FONT}`; ctx.textAlign = "center";
+        ctx.fillText("Meet Ada", 0, 2); ctx.textAlign = "left";
+        ctx.restore();
       }
     }
   }
@@ -525,10 +630,10 @@ function start() {
   const glowL = new THREE.PointLight(0x8aa2ff, 6, 5, 2);
   glowL.position.set(0, 1.2, 0.6); hinge.add(glowL);
 
-  hinge.rotation.x = -0.24; // lid opened ~104°
+  hinge.rotation.x = 1.45; // starts closed, opens on arrival
 
   laptop.position.set(0, -1.35, 0);
-  laptop.rotation.set(0.12, -0.42, 0);
+  laptop.rotation.set(0.1, -0.26, 0);
 
   /* ------------------------------------------------------------------ */
   /* the orb — S-CLAW's brain                                            */
@@ -716,32 +821,34 @@ function start() {
   /* ------------------------------------------------------------------ */
   /* layout (responsive) + theme                                         */
   /* ------------------------------------------------------------------ */
-  let narrow = false;
+  let narrow = false, camZ = 9, camY = 0.9, intro = 0;
+  const camTarget = new THREE.Vector3();
   function layout() {
     const w = stage.clientWidth, h = stage.clientHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     narrow = camera.aspect < 1.05;
-    const wantW = narrow ? 5.4 : 11.0;
+    const wantW = narrow ? 5.4 : 10.8;
     const dist = wantW / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect);
-    camera.position.set(0, narrow ? 1.0 : 0.9, Math.max(9, Math.min(dist, 24)));
-    camera.lookAt(0, narrow ? 0.25 : -0.25, 0);
+    camZ = Math.max(6, Math.min(dist, 24)); camY = narrow ? 1.0 : 0.85;
+    camera.position.set(0, camY, camZ);
+    camTarget.set(0, narrow ? 0.25 : -0.05, 0); camera.lookAt(camTarget);
     camera.updateProjectionMatrix();
 
     if (narrow) {
-      orbGroup.position.set(0, 2.85, 0); orbGroup.scale.setScalar(0.5);
-      panels[0].base.set(-1.75, 1.7, 0);
-      panels[1].base.set(0, 1.7, 0);
-      panels[2].base.set(1.75, 1.7, 0);
+      orbGroup.position.set(0, 3.05, 0); orbGroup.scale.setScalar(0.48);
+      panels[0].base.set(-1.75, 2.0, -0.3);
+      panels[1].base.set(0, 2.0, -0.3);
+      panels[2].base.set(1.75, 2.0, -0.3);
       panels.forEach((p) => p.g.scale.setScalar(0.5));
-      laptop.scale.setScalar(0.85); laptop.position.set(0, -1.3, 0);
+      laptop.scale.setScalar(0.92); laptop.position.set(0, -1.45, 0);
     } else {
-      orbGroup.position.set(3.75, 1.55, 0.2); orbGroup.scale.setScalar(0.9);
-      panels[0].base.set(-3.9, 1.3, -0.4);
-      panels[1].base.set(4.0, -0.75, -0.2);
-      panels[2].base.set(-3.6, -1.2, 0.9);
-      panels.forEach((p) => p.g.scale.setScalar(1));
-      laptop.scale.setScalar(1.08); laptop.position.set(0, -1.25, 0);
+      orbGroup.position.set(4.0, 1.6, -0.8); orbGroup.scale.setScalar(0.85);
+      panels[0].base.set(-4.15, 1.2, -1.3);
+      panels[1].base.set(4.35, -0.95, -1.1);
+      panels[2].base.set(-4.0, -1.25, -0.5);
+      panels.forEach((p) => p.g.scale.setScalar(0.88));
+      laptop.scale.setScalar(1.16); laptop.position.set(0, -1.45, 0);
     }
   }
   function applyTheme() {
@@ -814,7 +921,16 @@ function start() {
     root.rotation.y = cur.x * 0.16 + Math.sin(time * 0.25) * 0.05;
     root.rotation.x = cur.y * 0.06;
 
-    laptop.position.y = (narrow ? -1.3 : -1.25) + Math.sin(time * 0.8) * 0.05;
+    laptop.position.y = (narrow ? -1.45 : -1.45) + Math.sin(time * 0.8) * 0.04;
+    // lid opens + screen powers on when the visitor arrives
+    intro = reduceMotion || FORCED != null ? 1 : Math.min(1, intro + dt / 1.4);
+    const lid = easeOutBack(seg(intro, 0, 0.75));
+    hinge.rotation.x = lerp(1.45, -0.24, lid);
+    screenOn = seg(intro, 0.5, 0.95);
+    // slow cinematic camera drift
+    camera.position.x = Math.sin(time * 0.22) * (narrow ? 0.15 : 0.45);
+    camera.position.y = camY + Math.sin(time * 0.17) * 0.12;
+    camera.lookAt(camTarget);
 
     // orb
     orbUniforms.uTime.value = time;

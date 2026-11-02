@@ -184,6 +184,36 @@
     else setTimeout(function () { if (!stg.classList.contains("is3d")) play(); }, 1500);
   }
 
+  /* ---------- downloads: start in the background, stay on this page ---------- */
+  var toast;
+  function showToast(name) {
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.className = "dl-toast"; toast.setAttribute("role", "status"); toast.setAttribute("aria-live", "polite");
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = '<span class="dl-toast-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9"/></svg></span>' +
+      "<span><b>Download started</b><small>" + esc(name) + " — check your browser's downloads.</small></span>";
+    toast.classList.remove("show"); void toast.offsetWidth; toast.classList.add("show");
+    clearTimeout(toast._t); toast._t = setTimeout(function () { toast.classList.remove("show"); }, 5200);
+  }
+  function startDownload(url) {
+    var f = document.createElement("iframe");
+    f.style.display = "none"; f.setAttribute("aria-hidden", "true"); f.src = url;
+    document.body.appendChild(f);
+    setTimeout(function () { f.remove(); }, 120000);
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (!a) return;
+    var href = a.getAttribute("href") || "";
+    if (href.indexOf("/releases/latest/download/") === -1) return;
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    startDownload(a.href);
+    showToast(fileName(a.href));
+  });
+
   /* ---------- 3D tilt + glare on cards ---------- */
   var finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
   if (finePointer && !reduce) {
