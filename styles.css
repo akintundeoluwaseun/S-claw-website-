@@ -609,3 +609,24 @@ kbd { font: 600 12px var(--font); padding: 2px 6px; border-radius: 6px; border: 
 .start h3 { font-size: 20px; margin: 16px 0 6px; }
 .start p { color: var(--muted); }
 @media (max-width: 860px) { .start { grid-template-columns: 1fr; } .start li:not(:last-child)::after { right: 50%; top: auto; bottom: -14px; translate: 50% 0; rotate: 90deg; } }
+
+/* ---------- download page polish (same design, calmer and tidier) ---------- */
+/* highlights: a steady ring instead of a pulsing one */
+.hl { animation: none; box-shadow: 0 0 0 2.5px rgba(255,210,122,.95); }
+/* progress bars: steady, not looping */
+.inst-bar i, .mock-progress i { animation: none; transform: scaleX(.72); }
+/* picture area: more room, number badge no longer touches the picture */
+.ic-vis { height: auto; min-height: 156px; padding: 22px 18px 30px; }
+.ic-txt { padding-top: 22px; }
+.vis-ss { max-width: 250px; }
+/* the 3 mini steps and the computer picker stay on one tidy line */
+@media (max-width: 860px) {
+  .mini-steps { flex-wrap: nowrap; gap: 6px; }
+  .mini-steps li { padding: 6px 12px 6px 6px; font-size: 14px; gap: 7px; }
+  .mini-steps li span { width: 24px; height: 24px; font-size: 12px; }
+  .mini-steps li:not(:last-child)::after { display: none; }
+  .os-pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .os-pick button { padding: 10px 4px; font-size: 14px; }
+  .dl-box .dl-card { padding: 18px; }
+}
+@media (max-width: 360px) { .mini-steps li { font-size: 12.5px; } }
