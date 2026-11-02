@@ -5,14 +5,14 @@ Landing and download page for S-CLAW. Plain HTML, CSS and JavaScript with a Thre
 ## Deploy on Vercel
 Import this repo in Vercel → Framework preset **Other** → Deploy. Nothing else to set.
 
-## Update the download links
-Edit **`downloads.js`** only. Each platform has a `url`, `size` and `note`.
+## Download links
+All links live in **`downloads.js`**. They point to the app's newest release
+(`.../releases/latest/download/<file>`), so clicking downloads the file straight
+away and **nothing needs changing when a new version is published**.
 
-- Small files (under ~100 MB, e.g. the Android `.apk`) can go in `/downloads/` in this repo.
-- Big installers (Windows Standard ~3.6 GB, Pro ~6.5 GB, Mac, Linux) are too large for Vercel or Git.
-  Upload them to file storage (Cloudflare R2, Backblaze B2, Bunny CDN) and paste the direct public link.
-
-The download button on the hero detects the visitor's device and downloads the right file straight away.
+- Apps: Windows (`.exe`), Mac (`.dmg`, M-series only), Linux (`.AppImage`)
+- Android: marked "Coming soon" (`soon: true`) — add a build and remove `soon` when ready
+- Brains (Light / Standard / Pro): only for offline installs; each brain is several files
 
 ## Files
 - `index.html` — the page

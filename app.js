@@ -35,7 +35,7 @@
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
 
   document.getElementById("year").textContent = new Date().getFullYear();
-  document.querySelectorAll("[data-version]").forEach(function (el) { if (D.version) el.textContent = D.version; });
+
 
   /* ---------- detect visitor's device ---------- */
   function detectOS() {
@@ -71,17 +71,29 @@
       t.tabIndex = on ? 0 : -1;
     });
     var html = '<p class="dl-meta">' + esc(p.label) + "</p>";
-    (p.builds || []).forEach(function (b, i) {
-      var rec = os === "windows" && i === 0;
+    if (p.soon) {
+      html += '<div class="dl-card dl-soon"><span class="dl-os" aria-hidden="true">' + ICONS[os] + "</span>" +
+        '<div class="dl-info"><strong>S-CLAW for ' + esc(NAMES[os]) + ' <span class="badge badge-soon">Coming soon</span></strong>' +
+        "<span>The phone app is on the way. For now, S-CLAW runs on Windows, Mac and Linux.</span></div></div>";
+    }
+    (p.builds || []).forEach(function (b) {
       html +=
-        '<div class="dl-card' + (rec ? " rec" : "") + '">' +
+        '<div class="dl-card rec">' +
           '<span class="dl-os" aria-hidden="true">' + ICONS[os] + "</span>" +
-          '<div class="dl-info"><strong>S-CLAW ' + esc(b.name) + (rec ? ' <span class="badge">Recommended</span>' : "") + "</strong>" +
+          '<div class="dl-info"><strong>S-CLAW ' + esc(b.name) + "</strong>" +
           "<span>" + esc(b.note) + (b.size ? " · " + esc(b.size) : "") + "</span></div>" +
-          '<a class="btn btn-primary" href="' + esc(b.url) + '" download="' + esc(fileName(b.url)) + '">' + DL_ICON +
+          '<a class="btn btn-primary btn-shine" href="' + esc(b.url) + '">' + DL_ICON +
           "Download" + (b.size ? " (" + esc(b.size) + ")" : "") + "</a>" +
         "</div>";
     });
+    var stepsEl = document.getElementById("dlSteps");
+    if (stepsEl) {
+      if (p.steps && p.steps.length) {
+        // steps are trusted HTML written in downloads.js
+        stepsEl.innerHTML = "<h3>Installing takes a minute</h3><ol>" + p.steps.map(function (st) { return "<li>" + st + "</li>"; }).join("") + "</ol>";
+        stepsEl.hidden = false;
+      } else stepsEl.hidden = true;
+    }
     panel.innerHTML = html;
     panel.classList.remove("fade"); void panel.offsetWidth; panel.classList.add("fade");
   }
@@ -99,15 +111,32 @@
   var os = detectOS();
   render(os && D[os] ? os : "windows");
 
+  /* ---------- brain downloads ---------- */
+  var brainGrid = document.getElementById("brainGrid");
+  if (brainGrid && D.brains) {
+    brainGrid.innerHTML = D.brains.map(function (br) {
+      var many = br.files.length;
+      return '<div class="brain-card' + (br.recommended ? " rec" : "") + '">' +
+        '<div class="brain-top"><strong>' + esc(br.name) + "</strong>" +
+        (br.recommended ? '<span class="badge">Most laptops</span>' : "") + "</div>" +
+        '<p class="brain-fit">' + esc(br.fits) + "</p>" +
+        '<p class="brain-size">' + esc(br.size) + " · " + many + " files — download all</p>" +
+        '<ul class="brain-files">' + br.files.map(function (f, i) {
+          var label = /mmproj/.test(f) ? "Vision file" : many > 2 ? "Part " + (i + 1) : "Brain file";
+          return '<li><a class="file-btn" href="' + esc(D.brainBase + f) + '">' + DL_ICON +
+            "<span><b>" + esc(label) + "</b><small>" + esc(f) + "</small></span></a></li>";
+        }).join("") + "</ul></div>";
+    }).join("");
+  }
+
   // Hero button: download straight away for the visitor's device
-  if (os && D[os] && D[os].builds && D[os].builds[0]) {
+  if (os && D[os] && !D[os].soon && D[os].builds && D[os].builds[0]) {
     var b = D[os].builds[0];
     var heroDl = document.getElementById("heroDl");
     heroDl.href = b.url;
-    heroDl.setAttribute("download", fileName(b.url));
     document.getElementById("heroDlText").textContent = "Download for " + NAMES[os];
     document.getElementById("heroFine").innerHTML =
-      esc(b.size || "") + (b.size ? " · " : "") + 'Version ' + esc(D.version || "") + ' · <a href="#download" style="text-decoration:underline">Other devices</a>';
+      "Free · always the latest version · " + '<a href="#download" style="text-decoration:underline">Other devices</a>';
   }
 
   /* ---------- hero command demo ---------- */

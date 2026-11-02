@@ -363,3 +363,35 @@ h1 { font-size: clamp(38px, 5vw, 66px); }
   .ring { animation: none; transform: rotateX(-10deg) rotateY(-20deg); }
   .tilt > * { transform: none; }
 }
+
+/* ---------- downloads v3: steps, coming soon, brains ---------- */
+.install[hidden] { display: none; }
+.install code { font-size: 13px; padding: 2px 7px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); }
+.install b { color: var(--text); }
+.dl-soon { opacity: .9; }
+.badge-soon { background: linear-gradient(135deg, #f3b65c, #ff8a6b); }
+.tag-peach { color: var(--peach) !important; background: color-mix(in srgb, var(--peach) 14%, transparent); }
+
+.brains { max-width: 980px; margin: 56px auto 0; padding: 30px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.brains-head h3 { font-size: 21px; margin-bottom: 8px; }
+.brains-head p { color: var(--muted); max-width: 46em; }
+.brain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 24px 0 20px; }
+.brain-card { padding: 20px; border-radius: var(--r); background: var(--surface-2); border: 1px solid var(--line); display: flex; flex-direction: column; }
+.brain-card.rec { border-color: color-mix(in srgb, var(--blue) 50%, transparent); box-shadow: 0 18px 40px -26px rgba(110,139,255,.7); }
+.brain-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.brain-top strong { font-family: var(--display); font-size: 20px; }
+.brain-fit { color: var(--muted); font-size: 14px; margin-top: 4px; }
+.brain-size { font-size: 13px; font-weight: 600; color: var(--blue); margin: 10px 0 12px; }
+.brain-files { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; margin-top: auto; }
+.file-btn { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); transition: border-color .2s, transform .2s var(--ease), background .2s; }
+.file-btn:hover { border-color: var(--blue); transform: translateY(-1px); }
+.file-btn svg { color: var(--blue); width: 18px; height: 18px; }
+.file-btn span { display: grid; min-width: 0; }
+.file-btn b { font-size: 14px; }
+.file-btn small { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brain-how { margin: 0; padding: 16px 16px 16px 36px; border-radius: var(--r-sm); border: 1px dashed var(--line-2); color: var(--muted); display: grid; gap: 6px; }
+.brain-how b { color: var(--text); }
+@media (max-width: 860px) { .brain-grid { grid-template-columns: 1fr; } .brains { padding: 22px; } }
+.dl-card .btn { padding: 13px 24px; font-size: 15px; }
+.dl-info .badge { color: #fff; font-size: 11px; }
+.brain-files { margin-top: 0; }
