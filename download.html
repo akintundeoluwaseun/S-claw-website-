@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Download S-CLAW — Windows, Mac and Linux</title>
-  <meta name="description" content="Download S-CLAW free for Windows, Mac or Linux. No account. Ready in about five minutes." />
-  <meta name="theme-color" content="#0f1226" />
-  <meta property="og:title" content="Download S-CLAW — Windows, Mac and Linux" />
-  <meta property="og:description" content="Download S-CLAW free for Windows, Mac or Linux. No account. Ready in about five minutes." />
+  <title>Download S-CLAW — Windows, Mac, Linux</title>
+  <meta name="description" content="Download S-CLAW for Windows, Mac or Linux. Free, no account, always the latest version." />
+  <meta name="theme-color" content="#0b0c10" />
+  <meta property="og:title" content="Download S-CLAW — Windows, Mac, Linux" />
+  <meta property="og:description" content="Free, private AI agent. Download, install, and just tell it what to do." />
   <meta property="og:image" content="/assets/icon-512.png" />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/assets/icon-512.png" />
-  <link rel="preload" href="/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <script>
     try { var t = localStorage.getItem("sclaw-theme"); if (t) document.documentElement.dataset.theme = t;
@@ -36,7 +37,7 @@
         <a href="/faq">FAQ</a>
       </nav>
       <div class="nav-actions">
-        <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light mode">
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light mode" title="Switch theme">
           <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
           <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
         </button>
@@ -52,99 +53,129 @@
         <a href="/how-it-works">How it works</a>
         <a href="/download" aria-current="page">Download</a>
         <a href="/faq">FAQ</a>
-      <a class="btn btn-primary" href="/download">Download S-CLAW</a>
     </nav>
   </header>
 
   <main id="main">
-    <section class="page-head">
+    <section class="page-hero dl-hero">
+      <div class="page-glow" aria-hidden="true"></div>
       <div class="wrap">
-        <h1>Download S-CLAW.</h1>
-        <p class="lead">Free, with no account. Download, install, open. S-CLAW sets up the rest by itself.</p>
+        <p class="eyebrow">Download</p>
+        <h1>Get S-CLAW in <span class="grad">3 easy steps</span></h1>
+        <p class="lead">Free. No account. No setup choices. Download, install, and S-CLAW sets up the rest by itself.</p>
+        <ol class="mini-steps" aria-label="The three steps">
+          <li><span>1</span>Download</li>
+          <li><span>2</span>Install</li>
+          <li><span>3</span>Open &amp; ask</li>
+        </ol>
       </div>
     </section>
 
-    <section class="section tight">
-      <div class="wrap">
-        <div class="desk">
-          <div class="desk-get">
-            <div class="seg" role="radiogroup" aria-label="Your computer" id="osPick">
+    <section class="section first">
+      <div class="wrap guide">
+
+        <!-- STEP 1 -->
+        <article class="g-step" id="step1">
+          <div class="g-num" aria-hidden="true">1</div>
+          <div class="g-body">
+            <h2>Download S-CLAW</h2>
+            <p class="g-sub" id="osLine">We picked the right version for your computer.</p>
+            <div class="os-pick" role="radiogroup" aria-label="Your computer" id="osPick">
               <button type="button" role="radio" data-os="windows">Windows</button>
               <button type="button" role="radio" data-os="mac">Mac</button>
               <button type="button" role="radio" data-os="linux">Linux</button>
-              <button type="button" role="radio" data-os="android">Android</button>
+              <button type="button" role="radio" data-os="android">Android phone</button>
             </div>
-            <p class="get-hint" id="osLine">We picked the right version for your computer.</p>
-            <div id="getBox" aria-live="polite"><!-- filled by app.js --></div>
+            <div id="dlBox" class="dl-box" aria-live="polite"><!-- filled by app.js --></div>
           </div>
+        </article>
 
-          <div class="desk-show" id="player">
-            <ol class="player-tabs" role="tablist" aria-label="Install steps">
-              <li><button type="button" role="tab" data-step="0">1. Download</button></li>
-              <li><button type="button" role="tab" data-step="1">2. Install</button></li>
-              <li><button type="button" role="tab" data-step="2">3. Open</button></li>
-            </ol>
-            <div class="screen" id="screen" role="tabpanel" aria-live="polite"></div>
-            <div class="cap" id="cap"></div>
+        <!-- STEP 2 -->
+        <article class="g-step" id="step2">
+          <div class="g-num" aria-hidden="true">2</div>
+          <div class="g-body">
+            <h2>Install it</h2>
+            <p class="g-sub">Takes about a minute. Here's exactly what you'll see.</p>
+            <ol class="install-cards" id="installCards"><!-- filled by app.js --></ol>
           </div>
-        </div>
+        </article>
 
-        <div class="after">
-          <div class="box">
-            <h3>The first time you open it</h3>
-            <p>S-CLAW checks your computer and offers the brain that suits it. Press <b>Download</b> once. It's 2 to 6 GB, so Wi-Fi is best. After that it works offline.</p>
+        <!-- STEP 3 -->
+        <article class="g-step" id="step3">
+          <div class="g-num" aria-hidden="true">3</div>
+          <div class="g-body">
+            <h2>Open S-CLAW and let it set itself up</h2>
+            <p class="g-sub">The first time it opens, S-CLAW checks your computer and offers the brain that suits it. Just press <b>Download</b> and wait — nothing to choose.</p>
+            <div class="setup-demo">
+              <div class="mock-app" aria-hidden="true">
+                <div class="mock-bar"><span class="orb orb-xs"><i></i><i></i><i></i></span> S-CLAW</div>
+                <div class="mock-body">
+                  <p class="mock-title">Give Claw a brain</p>
+                  <p class="mock-text">Recommended for this computer</p>
+                  <div class="mock-brain"><b>Standard</b><span>3.3 GB · fits 8 GB memory</span><span class="mock-btn">Download</span></div>
+                  <div class="mock-progress"><i></i></div>
+                </div>
+              </div>
+              <ul class="setup-points">
+                <li><b>One-time download.</b> The brain is the part that thinks. After this, S-CLAW works even without internet.</li>
+                <li><b>Use Wi-Fi if you can.</b> It's 2–6 GB depending on your computer.</li>
+                <li><b>Then just type.</b> Press the quick bar at the top of your screen and ask, e.g. “Reply to Mum on WhatsApp: I'll call at 7”.</li>
+              </ul>
+            </div>
           </div>
-          <div class="box">
-            <h3>Then just ask</h3>
-            <p>Press the quick bar at the top of your screen and type something like “Reply to Mum on WhatsApp: I'll call at 7”. <a class="link" href="/features">More ideas</a></p>
-          </div>
-        </div>
+        </article>
 
-        <details class="offline" id="offline">
+        <p class="done-line"><span class="done-tick" aria-hidden="true">✓</span> That's it — you're ready. <a href="/how-it-works">See what to ask S-CLAW →</a></p>
+
+        <!-- OFFLINE / MANY PCS -->
+        <details class="offline" id="brains">
           <summary>
             <span class="off-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 4-2.4M19 13a10 10 0 0 0-2.6-1.9M2 9.5a15 15 0 0 1 5-3M22 9.5A15 15 0 0 0 12 5"/></svg></span>
-            <span><b>Installing on a computer with no internet?</b><small>Or setting up many computers? Get the brain here instead. Most people can skip this.</small></span>
+            <span><b>Installing on a computer with no internet?</b><small>Or setting up many PCs? Download the brain here instead. Most people can skip this.</small></span>
           </summary>
           <div class="off-body">
             <p class="off-q">How much memory (RAM) does that computer have?</p>
-            <div class="ram-pick" role="radiogroup" aria-label="Computer memory" id="ramPick"></div>
+            <div class="ram-pick" role="radiogroup" aria-label="Computer memory" id="ramPick"><!-- filled by app.js --></div>
             <details class="ram-help">
-              <summary>How do I check?</summary>
+              <summary>How do I check my memory?</summary>
               <ul>
-                <li><b>Windows:</b> press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Esc</kbd>, open <b>Performance</b>, then <b>Memory</b>.</li>
-                <li><b>Mac:</b> Apple menu, then <b>About This Mac</b>, and look at Memory.</li>
-                <li><b>Linux:</b> run <code>free -h</code> and look at the total.</li>
+                <li><b>Windows:</b> press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Esc</kbd> → <b>Performance</b> → <b>Memory</b>. Or Settings → System → About → “Installed RAM”.</li>
+                <li><b>Mac:</b> Apple menu → <b>About This Mac</b> → “Memory”.</li>
+                <li><b>Linux:</b> run <code>free -h</code> and look at “Mem total”.</li>
               </ul>
             </details>
-            <div id="brainBox" class="brain-box" aria-live="polite"></div>
+            <div id="brainBox" class="brain-box" aria-live="polite"><!-- filled by app.js --></div>
           </div>
         </details>
 
-        <p class="muted" style="margin-top:28px">Stuck? Most answers are in <a class="link" href="/faq">Questions</a>.</p>
+        <p class="help-line">Stuck? Read the <a href="/faq">FAQ</a> — most answers are there.</p>
       </div>
     </section>
   </main>
 
   <footer class="foot">
-    <div class="wrap">
-      <div class="foot-grid">
-        <div>
-          <a class="brand" href="/"><span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-name">S-CLAW</span></a>
-          <p class="foot-tag">The free, private AI that uses your computer for you.</p>
-        </div>
-        <nav aria-label="Product">
-          <h4>Product</h4>
-          <a href="/features">What it can do</a>
-          <a href="/how-it-works">How it works</a>
-          <a href="/download">Download</a>
-        </nav>
-        <nav aria-label="Help">
-          <h4>Help</h4>
-          <a href="/faq">Questions</a>
-          <a href="/download#offline">Install without internet</a>
-        </nav>
+    <div class="wrap foot-grid">
+      <div>
+        <a class="brand" href="/">
+          <span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="brand-name">S-CLAW</span>
+        </a>
+        <p class="foot-tag">The free, private AI that uses your computer for you.</p>
       </div>
-      <p class="foot-bottom">Made by Oluwaseun Joshua, <span id="year">2026</span>.</p>
+      <nav aria-label="Product">
+        <h4>Product</h4>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+        <a href="/download">Download</a>
+      </nav>
+      <nav aria-label="Help">
+        <h4>Help</h4>
+        <a href="/faq">FAQ</a>
+        <a href="/download#brains">Offline install</a>
+      </nav>
+    </div>
+    <div class="wrap foot-bottom">
+      <p>Made by Oluwaseun Joshua · © <span id="year">2026</span></p>
     </div>
   </footer>
 

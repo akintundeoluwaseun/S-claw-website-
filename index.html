@@ -4,15 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>S-CLAW — the AI that uses your computer for you</title>
-  <meta name="description" content="Type what you want done in plain English. S-CLAW does it on your own computer and asks before anything important. Free, private, no account." />
-  <meta name="theme-color" content="#0f1226" />
+  <meta name="description" content="Type what you want done in plain English. S-CLAW plans it, does it on your own computer, and checks every step. Free, private, no API keys." />
+  <meta name="theme-color" content="#0b0c10" />
   <meta property="og:title" content="S-CLAW — the AI that uses your computer for you" />
-  <meta property="og:description" content="Type what you want done in plain English. S-CLAW does it on your own computer and asks before anything important. Free, private, no account." />
+  <meta property="og:description" content="Free, private AI agent. Download, install, and just tell it what to do." />
   <meta property="og:image" content="/assets/icon-512.png" />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/assets/icon-512.png" />
-  <link rel="preload" href="/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <script>
     try { var t = localStorage.getItem("sclaw-theme"); if (t) document.documentElement.dataset.theme = t;
@@ -36,7 +37,7 @@
         <a href="/faq">FAQ</a>
       </nav>
       <div class="nav-actions">
-        <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light mode">
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light mode" title="Switch theme">
           <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
           <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
         </button>
@@ -52,139 +53,179 @@
         <a href="/how-it-works">How it works</a>
         <a href="/download">Download</a>
         <a href="/faq">FAQ</a>
-      <a class="btn btn-primary" href="/download">Download S-CLAW</a>
     </nav>
   </header>
 
   <main id="main">
+    <!-- HERO -->
     <section class="hero" id="top">
-      <div class="wrap hero-top">
-        <h1>Tell your computer what to do. <span class="nw">S-CLAW</span> does&nbsp;it.</h1>
-        <div class="hero-side">
-          <p class="lead">Type a task in plain English. S-CLAW does it on your own computer, step by step, and asks you before anything important.</p>
-          <div class="hero-cta">
-            <a class="btn btn-primary btn-big" id="heroDl" href="/download">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
-              <span id="heroDlText">Download S-CLAW</span>
-            </a>
-            <a class="btn btn-quiet btn-big" href="/how-it-works">How it works</a>
-          </div>
-          <p class="hero-fine" id="heroFine">Free for Windows, Mac and Linux. No account needed.</p>
+      <div class="glow" aria-hidden="true"></div>
+      <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="wrap hero-copy">
+        <p class="pill"><span class="dot"></span> Free · Private · No API keys</p>
+        <h1>Tell your computer what to do.<br /><span class="grad">S-CLAW does it.</span></h1>
+        <p class="lead">Type a task in plain English. S-CLAW plans it, carries it out on your own computer step by step, and checks each step really worked. Anything important waits for your OK.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg btn-shine" id="heroDl" href="/download">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
+            <span id="heroDlText">Download S-CLAW</span>
+          </a>
+          <a class="btn btn-ghost btn-lg" href="/how-it-works">See how it works</a>
         </div>
+        <p class="fine" id="heroFine">Windows · macOS · Linux — always the latest version</p>
       </div>
 
-      <div class="wide">
-        <div class="stage" id="stage" role="img" aria-label="Animation: S-CLAW on a laptop replying to a WhatsApp message, emailing an invoice and booking a meeting, asking for approval before each one.">
+      <div class="wrap-wide">
+        <div class="stage" id="stage" role="img" aria-label="Animation: S-CLAW on a laptop replying to a WhatsApp message, emailing an invoice and booking a calendar slot, asking for approval before each one.">
           <div class="stage-fallback">
+            <div class="orb orb-xl" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
             <div class="cmd">
               <div class="cmd-bar">
                 <span class="orb orb-xs" aria-hidden="true"><i></i><i></i><i></i></span>
                 <span class="cmd-text" id="cmdText">Reply to Mum on WhatsApp: I'll call at 7</span><span class="caret" aria-hidden="true"></span>
               </div>
               <ol class="cmd-steps" id="cmdSteps">
-                <li>Open WhatsApp</li>
-                <li>Find the chat with Mum</li>
-                <li>Type the message</li>
+                <li class="done">Open WhatsApp</li>
+                <li class="done">Find the chat "Mum"</li>
+                <li class="done">Type the message</li>
                 <li class="ask">Send "I'll call at 7" to Mum? <span class="chip">Approve</span></li>
               </ol>
             </div>
           </div>
-          <p class="stage-caption" aria-hidden="true"><span class="pulse"></span><span class="now">Now doing:</span> <span id="stageCaption">Reply to Mum on WhatsApp</span></p>
+          <div class="stage-caption" aria-hidden="true">
+            <span class="live"><i></i> Live demo</span>
+            <span id="stageCaption">Reply to Mum on WhatsApp: I'll call at 7</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section">
+    <!-- STATS + APPS -->
+    <section class="strip" aria-label="S-CLAW at a glance">
+      <div class="wrap stats">
+        <div class="stat"><strong data-count="0">0</strong><span>API keys needed</span></div>
+        <div class="stat"><strong><span data-count="100">100</span>%</strong><span>on your own computer</span></div>
+        <div class="stat"><strong data-count="3">3</strong><span>computer platforms</span></div>
+        <div class="stat"><strong>₦<span data-count="0">0</span></strong><span>to download and use</span></div>
+      </div>
+      <p class="marquee-label">Works with the apps you already use</p>
+      <ul class="apps wrap"><li>WhatsApp Desktop</li><li>Microsoft Word</li><li>Excel</li><li>Outlook</li><li>Chrome</li><li>Edge</li><li>File Explorer</li><li>PDFs</li><li>Calendar</li><li>TechDesk</li><li>Notepad</li><li>Settings</li></ul>
+    </section>
+
+    <!-- GET STARTED -->
+    <section class="section start-sec">
       <div class="wrap">
-        <div class="say-head">
-          <h2 class="sec-title">Say it the way you'd say it to a friend.</h2>
-          <p class="lead">No commands to learn. S-CLAW uses the apps already on your computer, the same way you do.</p>
-        </div>
-        <ul class="says">
-          <li><p class="say">Tell the shop group the new stock has arrived</p><p class="result">Sent in WhatsApp</p></li>
-          <li><p class="say">Find last month's invoice and email it to Tunde</p><p class="result">Email sent with the PDF attached</p></li>
-          <li><p class="say">Summarise this scanned PDF in five points</p><p class="result">Five points, read from the scan</p></li>
-          <li><p class="say">Find me a free hour on Thursday afternoon</p><p class="result">3 PM is free, added to your calendar</p></li>
-        </ul>
-        <p class="apps-line">Works with <b>WhatsApp Desktop</b>, <b>Word</b>, <b>Excel</b>, <b>Outlook</b>, <b>Chrome</b>, <b>Edge</b>, <b>File Explorer</b>, <b>PDFs</b>, your <b>calendar</b>, <b>TechDesk</b> and more.</p>
-      </div>
-    </section>
-
-    <section class="section band">
-      <div class="wrap charge">
-        <div>
-          <h2 class="sec-title">Nothing important happens without your OK.</h2>
-          <ul class="promises">
-            <li class="c-act"><div><h3>It shows its plan</h3><p>Every task is broken into clear steps you can see.</p></div></li>
-            <li class="c-ask"><div><h3>It asks before it acts</h3><p>Sending, deleting, paying or submitting waits for you, and it tells you exactly what will happen.</p></div></li>
-            <li class="c-done"><div><h3>It checks its own work</h3><p>After each step it looks again to make sure it really worked.</p></div></li>
-          </ul>
-        </div>
-        <div class="approval" aria-label="Example of an approval S-CLAW shows you">
-          <p class="ap-tag">Needs your OK</p>
-          <p class="ap-q">Send this message to Mum?</p>
-          <dl class="ap-detail">
-            <div><dt>App</dt><dd>WhatsApp</dd></div>
-            <div><dt>Chat</dt><dd>Mum</dd></div>
-            <div><dt>Message</dt><dd>“I'll call at 7”</dd></div>
-          </dl>
-          <div class="ap-btns" aria-hidden="true"><span class="ap-no">Cancel</span><span class="ap-yes">Approve</span></div>
-          <ul class="ap-steps">
-            <li>Opened WhatsApp</li>
-            <li>Found the chat with Mum</li>
-            <li>Typed the message</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="wrap">
-        <h2 class="sec-title">Ready in about five minutes.</h2>
-        <ol class="steps3">
-          <li><h3>Download</h3><p>One button. We pick the right version for your computer.</p></li>
-          <li><h3>Install</h3><p>Open the file and follow the short steps. About a minute.</p></li>
-          <li><h3>Open and ask</h3><p>S-CLAW sets up its own brain, then you just type.</p></li>
+        <header class="sec-head">
+          <p class="eyebrow">Get started</p>
+          <h2>Up and running in <span class="grad">3 easy steps</span></h2>
+        </header>
+        <ol class="start">
+          <li><span class="s-n">1</span><h3>Download</h3><p>One click. We pick the right version for your computer.</p></li>
+          <li><span class="s-n">2</span><h3>Install</h3><p>Open the file and follow the short steps. About a minute.</p></li>
+          <li><span class="s-n">3</span><h3>Open &amp; ask</h3><p>S-CLAW sets up its own brain, then just type what you need.</p></li>
         </ol>
-        <p style="margin-top:40px"><a class="link" href="/download">See the install guide</a></p>
+        <p class="more"><a class="btn btn-primary btn-shine" href="/download">Start with step 1 <span aria-hidden="true">→</span></a></p>
       </div>
     </section>
 
-    <section class="section tight">
+    <!-- FEATURES PREVIEW -->
+    <section class="section" id="features">
       <div class="wrap">
-        <div class="close">
-          <div>
-            <h2>Give your computer a helping hand.</h2>
-            <p>Free, private, and it works offline once it's set up.</p>
-          </div>
-          <div class="close-cta">
-            <a class="btn btn-primary btn-big" href="/download" data-os-download>Download S-CLAW</a>
-          </div>
+        <header class="sec-head">
+          <p class="eyebrow">What it can do</p>
+          <h2>One assistant for the work you do on your computer</h2>
+          <p class="sec-sub">S-CLAW uses your apps the way you would — so it already works with what you have installed.</p>
+        </header>
+        <div class="grid feats">
+          <article class="card tilt">
+            <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="M8 21h8M12 17v4"/></svg></span>
+            <h3>Operates your apps</h3>
+            <p>Opens apps, switches windows, reads the screen, clicks and types — WhatsApp, Word, your shop software, anything.</p>
+          </article>
+          <article class="card tilt">
+            <span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span>
+            <h3>Works the web</h3>
+            <p>Searches, reads pages, fills forms and downloads files — and tells you honestly when it hits a login or CAPTCHA.</p>
+          </article>
+          <article class="card tilt">
+            <span class="ico"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></span>
+            <h3>Reads documents</h3>
+            <p>PDFs (even scanned ones), Word, Excel and text. It shows which text came from a scan and how sure it is.</p>
+          </article>
+          <article class="card tilt">
+            <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+            <h3>Calendar &amp; reminders</h3>
+            <p>Create events, find free time and get real reminders. Works with Outlook, Google and other calendar apps.</p>
+          </article>
+        </div>
+        <p class="more"><a class="btn btn-ghost" href="/features">See everything it can do <span aria-hidden="true">→</span></a></p>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section class="section alt" id="how">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="eyebrow">How it works</p>
+          <h2>Three steps. You stay in charge.</h2>
+        </header>
+        <ol class="steps">
+          <li class="step tilt">
+            <span class="num">1</span>
+            <h3>Type or say it</h3>
+            <p>Use the quick bar at the top of your screen: “Find last month's invoice PDF and email it to Tunde.”</p>
+          </li>
+          <li class="step tilt">
+            <span class="num">2</span>
+            <h3>S-CLAW plans it</h3>
+            <p>It breaks the job into clear steps and shows you the plan before it starts.</p>
+          </li>
+          <li class="step tilt">
+            <span class="num">3</span>
+            <h3>You approve what matters</h3>
+            <p>Sending, deleting or paying waits for you — and the approval says exactly what will happen, then every step is checked.</p>
+          </li>
+        </ol>
+        <p class="more"><a class="btn btn-ghost" href="/how-it-works">How S-CLAW keeps you in charge <span aria-hidden="true">→</span></a></p>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="section">
+      <div class="wrap">
+        <div class="final">
+          <span class="orb orb-md" aria-hidden="true"><i></i><i></i><i></i></span>
+          <h2>Give your computer a helping hand</h2>
+          <p>Free. Private. Ready in minutes.</p>
+          <a class="btn btn-primary btn-lg" href="/download">Download S-CLAW</a>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="foot">
-    <div class="wrap">
-      <div class="foot-grid">
-        <div>
-          <a class="brand" href="/"><span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-name">S-CLAW</span></a>
-          <p class="foot-tag">The free, private AI that uses your computer for you.</p>
-        </div>
-        <nav aria-label="Product">
-          <h4>Product</h4>
-          <a href="/features">What it can do</a>
-          <a href="/how-it-works">How it works</a>
-          <a href="/download">Download</a>
-        </nav>
-        <nav aria-label="Help">
-          <h4>Help</h4>
-          <a href="/faq">Questions</a>
-          <a href="/download#offline">Install without internet</a>
-        </nav>
+    <div class="wrap foot-grid">
+      <div>
+        <a class="brand" href="/">
+          <span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="brand-name">S-CLAW</span>
+        </a>
+        <p class="foot-tag">The free, private AI that uses your computer for you.</p>
       </div>
-      <p class="foot-bottom">Made by Oluwaseun Joshua, <span id="year">2026</span>.</p>
+      <nav aria-label="Product">
+        <h4>Product</h4>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+        <a href="/download">Download</a>
+      </nav>
+      <nav aria-label="Help">
+        <h4>Help</h4>
+        <a href="/faq">FAQ</a>
+        <a href="/download#brains">Offline install</a>
+      </nav>
+    </div>
+    <div class="wrap foot-bottom">
+      <p>Made by Oluwaseun Joshua · © <span id="year">2026</span></p>
     </div>
   </footer>
 

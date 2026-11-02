@@ -75,8 +75,8 @@ function start() {
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
   }
-  const FONT = 'Figtree, "Segoe UI", system-ui, sans-serif';
-  const DISPLAY = 'Bricolage, Figtree, "Segoe UI", system-ui, sans-serif';
+  const FONT = 'Inter, "Segoe UI", system-ui, sans-serif';
+  const DISPLAY = 'Sora, Inter, "Segoe UI", system-ui, sans-serif';
   const ease = (t) => (t < 0 ? 0 : t > 1 ? 1 : t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const clamp01 = (t) => Math.max(0, Math.min(1, t));
   const lerp = (a, b, t) => a + (b - a) * t;
