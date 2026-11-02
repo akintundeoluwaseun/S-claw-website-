@@ -64,7 +64,7 @@
   var tabs = Array.prototype.slice.call(document.querySelectorAll(".tabs [role=tab]"));
 
   function render(os) {
-    var p = D[os]; if (!p) return;
+    var p = D[os]; if (!p || !panel) return;
     tabs.forEach(function (t) {
       var on = t.dataset.os === os;
       t.setAttribute("aria-selected", String(on));
@@ -109,7 +109,7 @@
   });
 
   var os = detectOS();
-  render(os && D[os] ? os : "windows");
+  if (panel) render(os && D[os] && !(location.hash === "#brains") ? os : "windows");
 
   /* ---------- brain downloads ---------- */
   var brainGrid = document.getElementById("brainGrid");
@@ -133,10 +133,12 @@
   if (os && D[os] && !D[os].soon && D[os].builds && D[os].builds[0]) {
     var b = D[os].builds[0];
     var heroDl = document.getElementById("heroDl");
+    if (heroDl) {
     heroDl.href = b.url;
     document.getElementById("heroDlText").textContent = "Download for " + NAMES[os];
     document.getElementById("heroFine").innerHTML =
-      "Free · always the latest version · " + '<a href="#download" style="text-decoration:underline">Other devices</a>';
+      "Free · always the latest version · " + '<a href="/download" style="text-decoration:underline">Other devices</a>';
+    }
   }
 
   /* ---------- hero command demo ---------- */
@@ -146,6 +148,7 @@
     { cmd: "Book 30 minutes with Ada on Friday afternoon", steps: ["Check your calendar", "Free slot found: Fri 2:00 PM", "Draft the event"], ask: "Add “Meet Ada” Fri 2:00 PM?" },
   ];
   var cmdText = document.getElementById("cmdText");
+  var hasDemo = !!cmdText;
   var stepsEl = document.getElementById("cmdSteps");
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var di = 0;
@@ -175,7 +178,11 @@
       }
     }, 38);
   }
-  play();
+  if (hasDemo) {
+    var stg = document.getElementById("stage");
+    if (!stg) play();
+    else setTimeout(function () { if (!stg.classList.contains("is3d")) play(); }, 1500);
+  }
 
   /* ---------- 3D tilt + glare on cards ---------- */
   var finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;

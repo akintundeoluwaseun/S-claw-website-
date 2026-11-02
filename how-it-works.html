@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>How it works — S-CLAW</title>
+  <meta name="description" content="Type or say a task. S-CLAW plans it, asks before anything important, and checks every step." />
+  <meta name="theme-color" content="#0b0c10" />
+  <meta property="og:title" content="How it works — S-CLAW" />
+  <meta property="og:description" content="Free, private AI agent. Download, install, and just tell it what to do." />
+  <meta property="og:image" content="/assets/icon-512.png" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/assets/icon-512.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script>
+    try { var t = localStorage.getItem("sclaw-theme"); if (t) document.documentElement.dataset.theme = t;
+      else if (matchMedia("(prefers-color-scheme: light)").matches) document.documentElement.dataset.theme = "light"; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/" aria-label="S-CLAW home">
+        <span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-name">S-CLAW</span>
+      </a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="/">Home</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works" aria-current="page">How it works</a>
+        <a href="/download">Download</a>
+        <a href="/faq">FAQ</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light mode" title="Switch theme">
+          <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+        </button>
+        <a class="btn btn-primary btn-sm" href="/download">Download</a>
+        <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+        <a href="/">Home</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works" aria-current="page">How it works</a>
+        <a href="/download">Download</a>
+        <a href="/faq">FAQ</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="page-glow" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="eyebrow">How it works</p>
+        <h1>You ask. It plans. <span class="grad">You stay in charge.</span></h1>
+        <p class="lead">S-CLAW turns one sentence into clear steps, does them on your computer, and checks each one.</p>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section class="section first" id="how">
+      <div class="wrap">
+        <ol class="steps">
+          <li class="step tilt">
+            <span class="num">1</span>
+            <h3>Type or say it</h3>
+            <p>Use the quick bar at the top of your screen: “Find last month's invoice PDF and email it to Tunde.”</p>
+          </li>
+          <li class="step tilt">
+            <span class="num">2</span>
+            <h3>S-CLAW plans it</h3>
+            <p>It breaks the job into clear steps and shows you the plan before it starts.</p>
+          </li>
+          <li class="step tilt">
+            <span class="num">3</span>
+            <h3>You approve what matters</h3>
+            <p>Sending, deleting or paying waits for you — and the approval says exactly what will happen, then every step is checked.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SAFETY -->
+    <section class="section">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="eyebrow">Built to be trusted</p>
+          <h2>It works for you, never around you</h2>
+        </header>
+        <div class="grid trio">
+          <article class="card tilt">
+            <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <h3>Asks before it acts</h3>
+            <p>Sending, deleting, paying or submitting always waits for you. The approval names the chat or file and quotes exactly what will happen.</p>
+          </article>
+          <article class="card tilt">
+            <span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg></span>
+            <h3>Checks every step</h3>
+            <p>After each action S-CLAW looks again to confirm it really worked — and tells you plainly when something didn't.</p>
+          </article>
+          <article class="card tilt">
+            <span class="ico"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+            <h3>Keeps secrets out</h3>
+            <p>It never saves passwords, codes, keys or card numbers. Everything else stays on your own computer.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS + APPS -->
+    <section class="strip alt-strip" aria-label="S-CLAW at a glance">
+      <div class="wrap stats">
+        <div class="stat"><strong data-count="0">0</strong><span>API keys needed</span></div>
+        <div class="stat"><strong><span data-count="100">100</span>%</strong><span>on your own computer</span></div>
+        <div class="stat"><strong data-count="3">3</strong><span>computer platforms</span></div>
+        <div class="stat"><strong>₦<span data-count="0">0</span></strong><span>to download and use</span></div>
+      </div>
+      <p class="marquee-label">Works with the apps you already use</p>
+      <ul class="apps wrap"><li>WhatsApp Desktop</li><li>Microsoft Word</li><li>Excel</li><li>Outlook</li><li>Chrome</li><li>Edge</li><li>File Explorer</li><li>PDFs</li><li>Calendar</li><li>TechDesk</li><li>Notepad</li><li>Settings</li></ul>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="section">
+      <div class="wrap">
+        <div class="final">
+          <span class="orb orb-md" aria-hidden="true"><i></i><i></i><i></i></span>
+          <h2>Give your computer a helping hand</h2>
+          <p>Free. Private. Ready in minutes.</p>
+          <a class="btn btn-primary btn-lg" href="/download">Download S-CLAW</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-grid">
+      <div>
+        <a class="brand" href="/">
+          <span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="brand-name">S-CLAW</span>
+        </a>
+        <p class="foot-tag">The free, private AI that uses your computer for you.</p>
+      </div>
+      <nav aria-label="Product">
+        <h4>Product</h4>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+        <a href="/download">Download</a>
+      </nav>
+      <nav aria-label="Help">
+        <h4>Help</h4>
+        <a href="/faq">FAQ</a>
+        <a href="/download#brains">Offline install</a>
+      </nav>
+    </div>
+    <div class="wrap foot-bottom">
+      <p>Made by Oluwaseun Joshua · © <span id="year">2026</span></p>
+    </div>
+  </footer>
+
+  <script src="/downloads.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

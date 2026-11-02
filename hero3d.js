@@ -25,8 +25,11 @@ function start() {
   /* ------------------------------------------------------------------ */
   /* basics                                                              */
   /* ------------------------------------------------------------------ */
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  const DPR = window.devicePixelRatio || 1;
+  const SMALL = Math.min(screen.width, screen.height) < 700;
+  const renderer = new THREE.WebGLRenderer({ antialias: DPR < 1.5, alpha: true, powerPreference: "high-performance" });
+  let pixelRatio = Math.min(DPR, SMALL ? 1.5 : 1.6);
+  renderer.setPixelRatio(pixelRatio);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -125,10 +128,10 @@ function start() {
     { cmd: "Book 30 min with Ada on Friday afternoon", steps: ["Check your calendar", "Free slot found: Fri 2:00 PM", "Draft “Meet Ada”"],
       ask: "Add “Meet Ada” Fri 2:00 PM?", done: "Added to your calendar", app: "cal" },
   ];
-  const T_TASK = 10.5;           // seconds per task
-  const T_TYPE = [0.2, 2.4];     // typing the command
-  const T_STEP0 = 2.7, T_STEP = 1.0;
-  const T_ASK = 6.0, T_CUR = [6.2, 7.2], T_CLICK = 7.3, T_DONE = 7.6;
+  const T_TASK = 8.4;            // seconds per task
+  const T_TYPE = [0.15, 1.7];    // typing the command
+  const T_STEP0 = 1.95, T_STEP = 0.8;
+  const T_ASK = 4.45, T_CUR = [4.6, 5.35], T_CLICK = 5.45, T_DONE = 5.7;
 
   function phaseOf(t) {
     return {
@@ -145,11 +148,12 @@ function start() {
   /* ------------------------------------------------------------------ */
   /* laptop screen UI (drawn every frame)                                */
   /* ------------------------------------------------------------------ */
-  const SW = 1280, SH = 800;
-  const screen = makeCanvasTex(SW, SH);
+  const SW = 1280, SH = 800, SCALE = SMALL ? 0.6 : 0.75;
+  const screenTex = makeCanvasTex(Math.round(SW * SCALE), Math.round(SH * SCALE));
 
   function drawScreen(time, taskIdx, t) {
-    const ctx = screen.ctx, task = TASKS[taskIdx], ph = phaseOf(t);
+    const ctx = screenTex.ctx, task = TASKS[taskIdx], ph = phaseOf(t);
+    ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
     // wallpaper
     const bg = ctx.createLinearGradient(0, 0, SW, SH);
     bg.addColorStop(0, "#141a33"); bg.addColorStop(0.55, "#1d1636"); bg.addColorStop(1, "#2a1626");
@@ -302,7 +306,7 @@ function start() {
     });
     ctx.font = `500 16px ${FONT}`; ctx.fillStyle = "#a6a7ae"; ctx.fillText("7:42 PM", SW - 96, SH - 22);
 
-    screen.tex.needsUpdate = true;
+    screenTex.tex.needsUpdate = true;
   }
 
   function appCursor(app, ax, ay, aw, ah, ph) {
@@ -514,7 +518,7 @@ function start() {
   hinge.add(bezel);
   const displayW = BW - 0.3, displayH = displayW * (SH / SW);
   const display = new THREE.Mesh(new THREE.PlaneGeometry(displayW, displayH),
-    new THREE.MeshBasicMaterial({ map: screen.tex, toneMapped: false }));
+    new THREE.MeshBasicMaterial({ map: screenTex.tex, toneMapped: false }));
   display.position.set(0, LH / 2 + 0.04, 0.004);
   hinge.add(display);
   // screen glow onto the keyboard
@@ -569,7 +573,7 @@ function start() {
         gl_FragColor = vec4(c, 0.96);
       }`,
   });
-  const orb = new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, 48), orbMat);
+  const orb = new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, SMALL ? 16 : 24), orbMat);
   const orbGroup = new THREE.Group();
   orbGroup.add(orb);
   root.add(orbGroup);
@@ -694,7 +698,7 @@ function start() {
   }
 
   /* ambient sparkles */
-  const DUST = 260;
+  const DUST = SMALL ? 120 : 200;
   const dGeo = new THREE.BufferGeometry();
   const dPos = new Float32Array(DUST * 3), dCol = new Float32Array(DUST * 3);
   const palette = [C.blue, C.violet, C.peach, new THREE.Color("#ffffff")];
@@ -721,7 +725,7 @@ function start() {
     const wantW = narrow ? 5.4 : 11.0;
     const dist = wantW / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect);
     camera.position.set(0, narrow ? 1.0 : 0.9, Math.max(9, Math.min(dist, 24)));
-    camera.lookAt(0, narrow ? -0.1 : -0.25, 0);
+    camera.lookAt(0, narrow ? 0.25 : -0.25, 0);
     camera.updateProjectionMatrix();
 
     if (narrow) {
@@ -770,15 +774,24 @@ function start() {
 
   const FORCED = (() => { const v = new URLSearchParams(location.search).get("demo"); return v ? parseFloat(v) : null; })();
   const clock = new THREE.Clock();
-  let elapsed = 0, lastTask = -1;
+  let elapsed = 0, lastTask = -1, frameNo = 0, avg = 0.016, screenEvery = 2;
   const v1 = new THREE.Vector3(), v2 = new THREE.Vector3(), v3 = new THREE.Vector3();
   const caption = document.getElementById("stageCaption");
 
   function frame() {
     requestAnimationFrame(frame);
-    const dt = Math.min(clock.getDelta(), 0.05);
+    const dt = Math.min(clock.getDelta(), 0.25);
     if (!visible || !running) return;
     elapsed += reduceMotion ? 0 : dt;
+    frameNo++;
+    // adaptive quality: if the device struggles, render fewer pixels
+    if (frameNo > 30 && frameNo < 400) {
+      avg = avg * 0.92 + dt * 0.08;
+      if (frameNo % 60 === 0 && avg > 0.024 && pixelRatio > 1) {
+        pixelRatio = Math.max(1, pixelRatio - 0.3); renderer.setPixelRatio(pixelRatio); layout();
+      }
+      if (frameNo % 60 === 0 && avg > 0.03) screenEvery = 3;
+    }
     const time = FORCED != null ? FORCED : reduceMotion ? 8 : elapsed;
 
     const cycle = time % (T_TASK * TASKS.length);
@@ -794,7 +807,7 @@ function start() {
     const want = ph.done > 0 ? "done" : t > T_STEP0 ? "work" : panels[taskIdx].state === "done" ? "done" : "idle";
     if (panels[taskIdx].state !== want) { panels[taskIdx].state = want; drawPanel(panels[taskIdx].p, taskIdx, want); }
 
-    drawScreen(time, taskIdx, t);
+    if (frameNo % screenEvery === 0 || FORCED != null) drawScreen(time, taskIdx, t);
 
     // parallax + idle sway
     cur.x += (target.x - cur.x) * 0.05; cur.y += (target.y - cur.y) * 0.05;

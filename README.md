@@ -15,7 +15,8 @@ away and **nothing needs changing when a new version is published**.
 - Brains (Light / Standard / Pro): only for offline installs; each brain is several files
 
 ## Files
-- `index.html` — the page
+- `index.html` — Home (3D hero)
+- `features.html`, `how-it-works.html`, `download.html`, `faq.html` — the other pages (Vercel serves them as /features, /how-it-works, /download, /faq)
 - `styles.css` — light/dark themes, animated logo
 - `app.js` — theme switch, menu, download panel, card tilt, counters
 - `hero3d.js` — the 3D hero: laptop running S-CLAW tasks, living orb, floating app windows
