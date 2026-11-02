@@ -3,17 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Features — S-CLAW</title>
-  <meta name="description" content="Everything S-CLAW can do on your computer: apps, web, documents, calendar, voice, memory and more." />
-  <meta name="theme-color" content="#0b0c10" />
-  <meta property="og:title" content="Features — S-CLAW" />
-  <meta property="og:description" content="Free, private AI agent. Download, install, and just tell it what to do." />
+  <title>What S-CLAW can do — S-CLAW</title>
+  <meta name="description" content="Messages, documents, the web, your calendar and more. See the sentences you can hand to S-CLAW." />
+  <meta name="theme-color" content="#0f1226" />
+  <meta property="og:title" content="What S-CLAW can do — S-CLAW" />
+  <meta property="og:description" content="Messages, documents, the web, your calendar and more. See the sentences you can hand to S-CLAW." />
   <meta property="og:image" content="/assets/icon-512.png" />
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/assets/icon-512.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" href="/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/figtree.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/styles.css" />
   <script>
     try { var t = localStorage.getItem("sclaw-theme"); if (t) document.documentElement.dataset.theme = t;
@@ -37,7 +36,7 @@
         <a href="/faq">FAQ</a>
       </nav>
       <div class="nav-actions">
-        <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light mode" title="Switch theme">
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light mode">
           <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
           <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
         </button>
@@ -53,170 +52,140 @@
         <a href="/how-it-works">How it works</a>
         <a href="/download">Download</a>
         <a href="/faq">FAQ</a>
+      <a class="btn btn-primary" href="/download">Download S-CLAW</a>
     </nav>
   </header>
 
   <main id="main">
-    <section class="page-hero">
-      <div class="page-glow" aria-hidden="true"></div>
+    <section class="page-head">
       <div class="wrap">
-        <p class="eyebrow">Features</p>
-        <h1>Everything S-CLAW <span class="grad">can do for you</span></h1>
-        <p class="lead">It operates the apps already on your computer, so it works with what you use every day.</p>
+        <h1>Everything you can hand to S-CLAW.</h1>
+        <p class="lead">If you can do it with your mouse and keyboard, you can ask S-CLAW to do it. Here are the kinds of things people say.</p>
       </div>
     </section>
 
-    <!-- FEATURES -->
-    <section class="section first" id="features">
-      <div class="wrap">
-        <div class="grid feats">
-          <article class="card tilt">
-            <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="M8 21h8M12 17v4"/></svg></span>
-            <h3>Operates your apps</h3>
-            <p>Opens apps, switches windows, reads the screen, clicks and types — WhatsApp, Word, your shop software, anything.</p>
-          </article>
-          <article class="card tilt">
-            <span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span>
-            <h3>Works the web</h3>
-            <p>Searches, reads pages, fills forms and downloads files — and tells you honestly when it hits a login or CAPTCHA.</p>
-          </article>
-          <article class="card tilt">
-            <span class="ico"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></span>
-            <h3>Reads documents</h3>
-            <p>PDFs (even scanned ones), Word, Excel and text. It shows which text came from a scan and how sure it is.</p>
-          </article>
-          <article class="card tilt">
-            <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
-            <h3>Calendar &amp; reminders</h3>
-            <p>Create events, find free time and get real reminders. Works with Outlook, Google and other calendar apps.</p>
-          </article>
-          <article class="card tilt">
-            <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6c0 4-2 5-2 7h16c0-2-2-3-2-7a6 6 0 0 0-6-6zM10 20a2 2 0 0 0 4 0"/></svg></span>
-            <h3>Morning briefing</h3>
-            <p>Today's agenda and anything left unfinished, once a day — always saying what it can't see.</p>
-          </article>
-          <article class="card tilt">
-            <span class="ico"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
-            <h3>Voice</h3>
-            <p>Push to talk. You see the transcript first, so nothing happens until it heard you right.</p>
-          </article>
-          <article class="card tilt">
-            <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3c5 0 8 3 8 7s-3 7-8 7l-5 4v-5c-2-1.3-3-3.3-3-6 0-4 3-7 8-7z"/></svg></span>
-            <h3>Remembers you</h3>
-            <p>Your preferences, projects and contacts. Never passwords, codes or card numbers — it refuses those.</p>
-          </article>
-          <article class="card tilt">
-            <span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-            <h3>Scheduled jobs</h3>
-            <p>Set tasks to run later or every day while S-CLAW is open, right from the tray.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3D TASK RING -->
-    <section class="section ring-sec" id="tasks">
-      <div class="wrap">
-        <header class="sec-head">
-          <p class="eyebrow">Just ask</p>
-          <h2>One sentence in. <span class="grad">Real work out.</span></h2>
-          <p class="sec-sub">A few of the things people hand to S-CLAW every day.</p>
-        </header>
-      </div>
-      <div class="ring-stage" id="ringStage">
-        <div class="ring-core" aria-hidden="true"><span class="orb orb-ring"><i></i><i></i><i></i></span></div>
-        <div class="ring" id="ring">
-          <div class="task"><span class="t-ico" style="--c:#25d366">💬</span><p>“Tell the shop group the stock has arrived”</p><div class="bar"><i></i></div><small>WhatsApp · sent</small></div>
-          <div class="task"><span class="t-ico" style="--c:#ff6b6b">📄</span><p>“Summarise this scanned PDF in 5 points”</p><div class="bar"><i></i></div><small>PDF · done</small></div>
-          <div class="task"><span class="t-ico" style="--c:#6e8bff">📅</span><p>“Find me a free hour on Thursday”</p><div class="bar"><i></i></div><small>Calendar · 3 PM free</small></div>
-          <div class="task"><span class="t-ico" style="--c:#3ddc97">📊</span><p>“Total this month's sales in Excel”</p><div class="bar"><i></i></div><small>Excel · ₦1.2m</small></div>
-          <div class="task"><span class="t-ico" style="--c:#b38cff">🔎</span><p>“Compare prices for an i5 laptop online”</p><div class="bar"><i></i></div><small>Browser · 6 found</small></div>
-          <div class="task"><span class="t-ico" style="--c:#f3b65c">⏰</span><p>“Remind me to call Ada at 4”</p><div class="bar"><i></i></div><small>Reminder · set</small></div>
-          <div class="task"><span class="t-ico" style="--c:#ff8a6b">🛠️</span><p>“Log this HP laptop repair in TechDesk”</p><div class="bar"><i></i></div><small>TechDesk · saved</small></div>
-          <div class="task"><span class="t-ico" style="--c:#8aa2ff">✉️</span><p>“Draft a polite reply to this email”</p><div class="bar"><i></i></div><small>Outlook · drafted</small></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRIVATE -->
-    <section class="section" id="private">
-      <div class="wrap split">
-        <div>
-          <p class="eyebrow">Private by design</p>
-          <h2>Your computer. Your data. No bills.</h2>
-          <p class="sec-sub">S-CLAW Local thinks on your own machine. After setup it works without internet, and nothing you do leaves your computer.</p>
-          <ul class="ticks">
-            <li>No account, no sign-up, no API key</li>
-            <li>Free to download and use</li>
-            <li>Works offline after the first setup</li>
-            <li>Runs quietly in your taskbar with notifications</li>
-            <li>Light and dark mode</li>
+    <section class="section tight">
+      <div class="wrap groups">
+        <div class="group">
+          <div class="group-name">
+            <span class="group-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c5 0 8 3 8 7s-3 7-8 7l-5 4v-5c-2-1.3-3-3.3-3-6 0-4 3-7 8-7z"/></svg></span>
+            <h2>Messages and apps</h2>
+            <p>Opens your apps, finds the right window, reads the screen, clicks and types.</p>
+          </div>
+          <ul class="says">
+            <li><p class="say">Reply to Mum on WhatsApp: I'll call at 7</p><p class="result">You approve before it sends</p></li>
+            <li><p class="say">Log this HP laptop repair in TechDesk</p><p class="result">Saved in TechDesk</p></li>
           </ul>
         </div>
-        <div class="card brain">
-          <h3>S-CLAW picks a brain that fits your computer</h3>
-          <div class="brain-row">
-            <div>
-              <strong>Light</strong>
-              <span>Older or low-memory laptops</span>
-            </div>
-            <span class="tag tag-peach">1.9 GB</span>
+
+        <div class="group">
+          <div class="group-name">
+            <span class="group-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span>
+            <h2>The web</h2>
+            <p>Searches, reads pages, fills forms and downloads files. It tells you plainly when it hits a login or a CAPTCHA.</p>
           </div>
-          <div class="brain-row">
-            <div>
-              <strong>Standard</strong>
-              <span>Most laptops</span>
-            </div>
-            <span class="tag">8 GB RAM+</span>
+          <ul class="says">
+            <li><p class="say">Compare prices for an i5 laptop online</p><p class="result">Six options, side by side</p></li>
+            <li><p class="say">Download the form from the school website</p><p class="result">Saved to your Downloads</p></li>
+          </ul>
+        </div>
+
+        <div class="group">
+          <div class="group-name">
+            <span class="group-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></span>
+            <h2>Documents</h2>
+            <p>PDFs (even scanned ones), Word, Excel and text. It tells you which words came from a scan and how sure it is.</p>
           </div>
-          <div class="brain-row">
-            <div>
-              <strong>Pro</strong>
-              <span>Smarter and quicker</span>
-            </div>
-            <span class="tag tag-alt">16 GB RAM+</span>
+          <ul class="says">
+            <li><p class="say">Summarise this scanned PDF in five points</p><p class="result">Read from the scan, with a confidence note</p></li>
+            <li><p class="say">Total this month's sales in Excel</p><p class="result">Added up and checked</p></li>
+          </ul>
+        </div>
+
+        <div class="group">
+          <div class="group-name">
+            <span class="group-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+            <h2>Calendar and reminders</h2>
+            <p>Creates events, finds free time and gives real reminders. Works with Outlook, Google Calendar and other calendar apps.</p>
           </div>
-          <p class="fine">The app offers the right brain on first start and downloads it for you. You can switch later in Settings.</p>
+          <ul class="says">
+            <li><p class="say">Book 30 minutes with Ada on Friday afternoon</p><p class="result">Friday, 2 PM, added</p></li>
+            <li><p class="say">Remind me to call the supplier at 4</p><p class="result">Reminder set</p></li>
+            <li><p class="say">What's on today?</p><p class="result">A morning briefing, once a day if you like</p></li>
+          </ul>
+        </div>
+
+        <div class="group">
+          <div class="group-name">
+            <span class="group-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
+            <h2>Voice and memory</h2>
+            <p>Hold to talk and see what it heard before it starts. It remembers your preferences, projects and contacts, never passwords, codes or card numbers.</p>
+          </div>
+          <ul class="says">
+            <li><p class="say">Remember that Tunde is my accountant</p><p class="result">Saved for next time</p></li>
+          </ul>
+        </div>
+
+        <div class="group">
+          <div class="group-name">
+            <span class="group-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <h2>Scheduled jobs</h2>
+            <p>Runs tasks later or every day, while S-CLAW is open in your taskbar.</p>
+          </div>
+          <ul class="says">
+            <li><p class="say">Every evening, back up my Documents folder</p><p class="result">Runs daily at the time you choose</p></li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- FINAL CTA -->
+    <section class="section band">
+      <div class="wrap">
+        <h2 class="sec-title">It thinks on your own computer.</h2>
+        <p class="lead">S-CLAW's brain runs on your machine, so it's free, private and works offline after setup. When you first open it, it picks the brain that suits your computer's memory. You can change it later in Settings.</p>
+        <div class="table-wrap">
+          <table class="tiers">
+            <thead><tr><th scope="col">Brain</th><th scope="col">Best for</th><th scope="col">Computer memory</th><th scope="col">Download</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Light</th><td>Older or low-memory laptops</td><td>Less than 8 GB</td><td>1.9 GB</td></tr>
+              <tr class="pick"><th scope="row">Standard <span class="tag">Most people</span></th><td>Most laptops</td><td>8 to 15 GB</td><td>3.3 GB</td></tr>
+              <tr><th scope="row">Pro</th><td>Smarter, quicker answers</td><td>16 GB or more</td><td>6.2 GB</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <section class="section">
       <div class="wrap">
-        <div class="final">
-          <span class="orb orb-md" aria-hidden="true"><i></i><i></i><i></i></span>
-          <h2>Give your computer a helping hand</h2>
-          <p>Free. Private. Ready in minutes.</p>
-          <a class="btn btn-primary btn-lg" href="/download">Download S-CLAW</a>
+        <div class="close">
+          <div><h2>Try it on your own computer.</h2><p>Free, with no account.</p></div>
+          <div class="close-cta"><a class="btn btn-primary btn-big" href="/download" data-os-download>Download S-CLAW</a></div>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="foot">
-    <div class="wrap foot-grid">
-      <div>
-        <a class="brand" href="/">
-          <span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="brand-name">S-CLAW</span>
-        </a>
-        <p class="foot-tag">The free, private AI that uses your computer for you.</p>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <a class="brand" href="/"><span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-name">S-CLAW</span></a>
+          <p class="foot-tag">The free, private AI that uses your computer for you.</p>
+        </div>
+        <nav aria-label="Product">
+          <h4>Product</h4>
+          <a href="/features">What it can do</a>
+          <a href="/how-it-works">How it works</a>
+          <a href="/download">Download</a>
+        </nav>
+        <nav aria-label="Help">
+          <h4>Help</h4>
+          <a href="/faq">Questions</a>
+          <a href="/download#offline">Install without internet</a>
+        </nav>
       </div>
-      <nav aria-label="Product">
-        <h4>Product</h4>
-        <a href="/features">Features</a>
-        <a href="/how-it-works">How it works</a>
-        <a href="/download">Download</a>
-      </nav>
-      <nav aria-label="Help">
-        <h4>Help</h4>
-        <a href="/faq">FAQ</a>
-        <a href="/download#brains">Offline install</a>
-      </nav>
-    </div>
-    <div class="wrap foot-bottom">
-      <p>Made by Oluwaseun Joshua · © <span id="year">2026</span></p>
+      <p class="foot-bottom">Made by Oluwaseun Joshua, <span id="year">2026</span>.</p>
     </div>
   </footer>
 

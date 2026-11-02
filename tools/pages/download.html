@@ -1,0 +1,66 @@
+    <section class="page-head">
+      <div class="wrap">
+        <h1>Download S-CLAW.</h1>
+        <p class="lead">Free, with no account. Download, install, open. S-CLAW sets up the rest by itself.</p>
+      </div>
+    </section>
+
+    <section class="section tight">
+      <div class="wrap">
+        <div class="desk">
+          <div class="desk-get">
+            <div class="seg" role="radiogroup" aria-label="Your computer" id="osPick">
+              <button type="button" role="radio" data-os="windows">Windows</button>
+              <button type="button" role="radio" data-os="mac">Mac</button>
+              <button type="button" role="radio" data-os="linux">Linux</button>
+              <button type="button" role="radio" data-os="android">Android</button>
+            </div>
+            <p class="get-hint" id="osLine">We picked the right version for your computer.</p>
+            <div id="getBox" aria-live="polite"><!-- filled by app.js --></div>
+          </div>
+
+          <div class="desk-show" id="player">
+            <ol class="player-tabs" role="tablist" aria-label="Install steps">
+              <li><button type="button" role="tab" data-step="0">1. Download</button></li>
+              <li><button type="button" role="tab" data-step="1">2. Install</button></li>
+              <li><button type="button" role="tab" data-step="2">3. Open</button></li>
+            </ol>
+            <div class="screen" id="screen" role="tabpanel" aria-live="polite"></div>
+            <div class="cap" id="cap"></div>
+          </div>
+        </div>
+
+        <div class="after">
+          <div class="box">
+            <h3>The first time you open it</h3>
+            <p>S-CLAW checks your computer and offers the brain that suits it. Press <b>Download</b> once. It's 2 to 6 GB, so Wi-Fi is best. After that it works offline.</p>
+          </div>
+          <div class="box">
+            <h3>Then just ask</h3>
+            <p>Press the quick bar at the top of your screen and type something like “Reply to Mum on WhatsApp: I'll call at 7”. <a class="link" href="/features">More ideas</a></p>
+          </div>
+        </div>
+
+        <details class="offline" id="offline">
+          <summary>
+            <span class="off-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 4-2.4M19 13a10 10 0 0 0-2.6-1.9M2 9.5a15 15 0 0 1 5-3M22 9.5A15 15 0 0 0 12 5"/></svg></span>
+            <span><b>Installing on a computer with no internet?</b><small>Or setting up many computers? Get the brain here instead. Most people can skip this.</small></span>
+          </summary>
+          <div class="off-body">
+            <p class="off-q">How much memory (RAM) does that computer have?</p>
+            <div class="ram-pick" role="radiogroup" aria-label="Computer memory" id="ramPick"></div>
+            <details class="ram-help">
+              <summary>How do I check?</summary>
+              <ul>
+                <li><b>Windows:</b> press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Esc</kbd>, open <b>Performance</b>, then <b>Memory</b>.</li>
+                <li><b>Mac:</b> Apple menu, then <b>About This Mac</b>, and look at Memory.</li>
+                <li><b>Linux:</b> run <code>free -h</code> and look at the total.</li>
+              </ul>
+            </details>
+            <div id="brainBox" class="brain-box" aria-live="polite"></div>
+          </div>
+        </details>
+
+        <p class="muted" style="margin-top:28px">Stuck? Most answers are in <a class="link" href="/faq">Questions</a>.</p>
+      </div>
+    </section>

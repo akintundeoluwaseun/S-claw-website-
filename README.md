@@ -1,27 +1,25 @@
 # S-CLAW website
 
-Landing and download page for S-CLAW. Plain HTML, CSS and JavaScript with a Three.js 3D hero — no build step.
+Website for S-CLAW: Home, What it can do, How it works, Download and Questions.
+Plain HTML, CSS and JavaScript with a Three.js 3D hero. No build step needed to deploy.
 
 ## Deploy on Vercel
-Import this repo in Vercel → Framework preset **Other** → Deploy. Nothing else to set.
+Import this repo in Vercel, choose framework preset **Other**, deploy. Pages are served as
+`/`, `/features`, `/how-it-works`, `/download`, `/faq`.
 
-## Download links
-All links live in **`downloads.js`**. They point to the app's newest release
-(`.../releases/latest/download/<file>`), so clicking downloads the file straight
-away and **nothing needs changing when a new version is published**.
-
-- Apps: Windows (`.exe`), Mac (`.dmg`, M-series only), Linux (`.AppImage`)
-- Android: marked "Coming soon" (`soon: true`) — add a build and remove `soon` when ready
-- Brains (Light / Standard / Pro): only for offline installs; each brain is several files
+## Edit
+- **Download links:** `downloads.js` only. Links always point to the newest release, so
+  nothing changes when a new version is published. Downloads start in the background and
+  visitors stay on the site.
+- **Page text:** edit `tools/pages/<page>.html`, then run `python3 tools/build.py`
+  (it adds the shared header and footer and writes the real pages).
+- **Look:** `styles.css`. Colours have meaning: blue = S-CLAW working, orange = needs
+  your OK, green = done.
 
 ## Files
-- `index.html` — Home (3D hero)
-- `features.html`, `how-it-works.html`, `download.html`, `faq.html` — the other pages (Vercel serves them as /features, /how-it-works, /download, /faq)
-- `styles.css` — light/dark themes, animated logo
-- `app.js` — theme switch, menu, download panel, card tilt, counters
-- `hero3d.js` — the 3D hero: laptop running S-CLAW tasks, living orb, floating app windows
-- `vendor/` — Three.js bundled locally (no outside connections at runtime)
-- `downloads.js` — download links and version
-- `vercel.json` — makes `/downloads/*` files download instead of opening
+- `index.html`, `features.html`, `how-it-works.html`, `download.html`, `faq.html` — built pages
+- `app.js` — theme, menu, download page, background downloads
+- `hero3d.js` — the 3D laptop animation on Home
+- `vendor/` — Three.js (MIT); `fonts/` — Bricolage Grotesque and Figtree (OFL), self-hosted
 
 Made by Oluwaseun Joshua.
