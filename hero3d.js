@@ -27,8 +27,9 @@ function start() {
   /* ------------------------------------------------------------------ */
   const DPR = window.devicePixelRatio || 1;
   const SMALL = Math.min(screen.width, screen.height) < 700;
-  const renderer = new THREE.WebGLRenderer({ antialias: DPR < 1.5, alpha: true, powerPreference: "high-performance" });
-  let pixelRatio = Math.min(DPR, SMALL ? 1.5 : 1.6);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+  let pixelRatio = Math.min(DPR, 2);
+  const MIN_PR = Math.min(DPR, 1.5);
   renderer.setPixelRatio(pixelRatio);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -86,7 +87,7 @@ function start() {
     cv.width = w; cv.height = h;
     const tex = new THREE.CanvasTexture(cv);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     return { cv, ctx: cv.getContext("2d"), tex };
   }
 
@@ -151,7 +152,7 @@ function start() {
   /* ------------------------------------------------------------------ */
   /* laptop screen (drawn ~30 times a second)                            */
   /* ------------------------------------------------------------------ */
-  const SW = 1280, SH = 800, SCALE = SMALL ? 0.6 : 0.75;
+  const SW = 1280, SH = 800, SCALE = 1;
   const screenTex = makeCanvasTex(Math.round(SW * SCALE), Math.round(SH * SCALE));
   let screenOn = 0; // 0..1, fades the screen in after the lid opens
 
@@ -894,8 +895,8 @@ function start() {
     // adaptive quality: if the device struggles, render fewer pixels
     if (frameNo > 30 && frameNo < 400) {
       avg = avg * 0.92 + dt * 0.08;
-      if (frameNo % 60 === 0 && avg > 0.024 && pixelRatio > 1) {
-        pixelRatio = Math.max(1, pixelRatio - 0.3); renderer.setPixelRatio(pixelRatio); layout();
+      if (frameNo % 60 === 0 && avg > 0.03 && pixelRatio > MIN_PR) {
+        pixelRatio = Math.max(MIN_PR, pixelRatio - 0.25); renderer.setPixelRatio(pixelRatio); layout();
       }
       if (frameNo % 60 === 0 && avg > 0.03) screenEvery = 3;
     }
