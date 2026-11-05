@@ -636,3 +636,12 @@ kbd { font: 600 12px var(--font); padding: 2px 6px; border-radius: 6px; border: 
   .dl-box .dl-card { padding: 18px; }
 }
 @media (max-width: 360px) { .mini-steps li { font-size: 12.5px; } }
+
+/* ---------- "Built by" badge (links to the maker's portfolio) ---------- */
+.foot-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px 20px; }
+.made-by { display: inline-flex; align-items: center; gap: 10px; padding: 6px 16px 6px 6px; border-radius: 999px; background: #15171d; color: #c9cad2; font-size: 14px; border: 1px solid rgba(255, 255, 255, .1); box-shadow: 0 10px 30px -14px rgba(110, 139, 255, .55); transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease); }
+.made-by:hover { transform: translateY(-2px); border-color: rgba(179, 140, 255, .55); box-shadow: 0 16px 36px -14px rgba(110, 139, 255, .8); }
+.made-by:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
+.made-by-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--violet)); color: #fff; flex: none; }
+.made-by-icon svg { width: 16px; height: 16px; }
+.made-by-text strong { color: #fff; font-weight: 700; }
