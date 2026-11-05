@@ -93,6 +93,12 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .icon-btn:hover { background: var(--surface-2); }
 [data-theme="dark"] .i-moon, [data-theme="light"] .i-sun { display: none; }
 
+/* ---------- in-development banner ---------- */
+.beta-banner { position: relative; z-index: 60; background: linear-gradient(90deg, var(--gold), var(--peach)); color: #1a1205; text-align: center; border-bottom: 1px solid rgba(0, 0, 0, .15); }
+.beta-banner-inner { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 14px; padding: 14px 16px; font-size: clamp(15px, 2.2vw, 18px); line-height: 1.35; font-weight: 600; }
+.beta-badge { font-family: var(--display); font-weight: 700; font-size: .78em; letter-spacing: .12em; text-transform: uppercase; background: #1a1205; color: var(--gold); padding: 5px 12px; border-radius: 999px; white-space: nowrap; }
+.beta-banner p { margin: 0; }
+
 /* ---------- nav ---------- */
 .nav { position: sticky; top: 0; z-index: 50; transition: background .3s, border-color .3s; border-bottom: 1px solid transparent; }
 .nav.scrolled { background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: var(--line); }
