@@ -11,7 +11,7 @@
   window.SCLAW_DOWNLOADS = {
     windows: {
       name: "Windows", label: "Windows 10 or 11",
-      file: "S-CLAW-Windows-Setup.exe", size: "268 MB",
+      file: "S-CLAW-Windows-Setup.exe", size: "257 MB",
       url: BASE + "S-CLAW-Windows-Setup.exe",
       install: [
         { title: "Open the file", text: "Find <b>S-CLAW-Windows-Setup.exe</b> in your Downloads and double-click it.", visual: "file" },
