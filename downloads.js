@@ -11,7 +11,7 @@
   window.SCLAW_DOWNLOADS = {
     windows: {
       name: "Windows", label: "Windows 10 or 11",
-      file: "S-CLAW-Windows-Setup.exe", size: "257 MB",
+      file: "S-CLAW-Windows-Setup.exe", size: "258 MB",
       url: BASE + "S-CLAW-Windows-Setup.exe",
       install: [
         { title: "Open the file", text: "Find <b>S-CLAW-Windows-Setup.exe</b> in your Downloads and double-click it.", visual: "file" },
@@ -22,7 +22,7 @@
 
     mac: {
       name: "Mac", label: "Apple M-series Macs (M1 or newer)",
-      file: "S-CLAW-Mac.dmg", size: "",
+      file: "S-CLAW-Mac.dmg", size: "239 MB",
       url: BASE + "S-CLAW-Mac.dmg",
       note: "For M-series Macs only (M1, M2, M3, M4). Older Intel Macs aren't supported yet.",
       install: [
@@ -34,7 +34,7 @@
 
     linux: {
       name: "Linux", label: "Ubuntu, Debian, Fedora and most others",
-      file: "S-CLAW-Linux.AppImage", size: "",
+      file: "S-CLAW-Linux.AppImage", size: "307 MB",
       url: BASE + "S-CLAW-Linux.AppImage",
       install: [
         { title: "Allow it to run", text: "Right-click <b>S-CLAW-Linux.AppImage</b> → <b>Properties</b> → turn on <b>Allow executing as a program</b>.", visual: "exec" },
