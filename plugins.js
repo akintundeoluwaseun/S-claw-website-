@@ -47,6 +47,24 @@
         shipped: true,
       },
       {
+        id: "drive-libreoffice",
+        name: "LibreOffice",
+        by: "S-CLAW",
+        category: "Office & documents",
+        door: "Command line",
+        summary:
+          "Turn Word, Excel and PowerPoint files into PDF \u2014 one file or a whole folder in one go \u2014 or convert between the formats. Works on a computer with no Microsoft Office on it.",
+        prompts: [
+          "Turn every quotation in this folder into a PDF",
+          "Convert these .doc files to .docx so they open properly",
+          "Turn this Word invoice into a PDF",
+        ],
+        needs: "LibreOffice, free from libreoffice.org",
+        file: "drive-libreoffice.zip",
+        size: "2.3 KB",
+        url: BASE + "drive-libreoffice.zip",
+      },
+      {
         id: "drive-inkscape",
         name: "Inkscape",
         by: "S-CLAW",
