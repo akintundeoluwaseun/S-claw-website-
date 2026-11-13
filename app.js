@@ -291,6 +291,47 @@
     counters.forEach(function (c) { co.observe(c); });
   } else counters.forEach(runCount);
 
+  /* ---------- plugin directory ---------- */
+  /* Everything here comes from plugins.js. Adding a plugin is one entry
+     there plus the .zip; no markup is edited. esc() is used on every field
+     because a plugin's own text ends up in this page. */
+  var plugList = document.getElementById("plugList");
+  if (plugList) {
+    var P = window.SCLAW_PLUGINS || {};
+    var items = P.items || [];
+    var docsLink = document.getElementById("plugDocs");
+    var submitLink = document.getElementById("plugSubmit");
+    if (docsLink && P.docs) docsLink.href = P.docs;
+    if (submitLink && P.submit) submitLink.href = P.submit;
+
+    plugList.innerHTML = items.map(function (it) {
+      var prompts = (it.prompts || []).map(function (s) {
+        return '<li>&ldquo;' + esc(s) + '&rdquo;</li>';
+      }).join("");
+      return '' +
+        '<article class="card plug">' +
+          '<div class="plug-top">' +
+            '<h3>' + esc(it.name) + '</h3>' +
+            '<span class="plug-tag">' + esc(it.category || "Plugin") + '</span>' +
+          '</div>' +
+          '<p>' + esc(it.summary) + '</p>' +
+          (prompts ? '<p class="plug-say">Things you can say</p><ul class="plug-prompts">' + prompts + '</ul>' : '') +
+          '<dl class="plug-meta">' +
+            '<dt>Drives it through</dt><dd>' + esc(it.door || "the mouse") + '</dd>' +
+            '<dt>You also need</dt><dd>' + esc(it.needs || "nothing extra") + '</dd>' +
+            '<dt>By</dt><dd>' + esc(it.by || "unknown") + (it.shipped ? ' &middot; already in S-CLAW' : '') + '</dd>' +
+          '</dl>' +
+          '<a class="btn btn-primary btn-sm" href="' + esc(it.url) + '" download>' +
+            'Download &middot; ' + esc(it.size || "") +
+          '</a>' +
+        '</article>';
+    }).join("");
+
+    if (!items.length) {
+      plugList.innerHTML = '<p class="plug-small">No plugins listed yet.</p>';
+    }
+  }
+
   /* ---------- reveal on scroll ---------- */
   var els = document.querySelectorAll(".sec-head, .card, .step, .final, .install");
   if ("IntersectionObserver" in window && !reduce) {

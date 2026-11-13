@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plugins — S-CLAW</title>
+  <meta name="description" content="Teach S-CLAW to drive one particular program. A plugin is written instructions, never a program - anything that can run is refused on install." />
+  <meta name="theme-color" content="#0b0c10" />
+  <meta property="og:title" content="Plugins — S-CLAW" />
+  <meta property="og:description" content="Free, private AI agent. Download, install, and just tell it what to do." />
+  <meta property="og:image" content="/assets/icon-512.png" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/assets/icon-512.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=202611051101" />
+  <script>
+    try { var t = localStorage.getItem("sclaw-theme"); if (t) document.documentElement.dataset.theme = t;
+      else if (matchMedia("(prefers-color-scheme: light)").matches) document.documentElement.dataset.theme = "light"; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <div class="beta-banner" role="status">
+    <div class="beta-banner-inner">
+      <span class="beta-badge">In development</span>
+      <p>S-CLAW is still being built. Expect bugs, slow tasks and errors while we improve it.</p>
+    </div>
+  </div>
+
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/" aria-label="S-CLAW home">
+        <span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-name">S-CLAW</span>
+      </a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="/">Home</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+        <a href="/plugins" aria-current="page">Plugins</a>
+        <a href="/download">Download</a>
+        <a href="/faq">FAQ</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Switch to light mode" title="Switch theme">
+          <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+        </button>
+        <a class="btn btn-primary btn-sm" href="/download">Download</a>
+        <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+        <a href="/">Home</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+        <a href="/plugins" aria-current="page">Plugins</a>
+        <a href="/download">Download</a>
+        <a href="/faq">FAQ</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="page-glow" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="eyebrow">Plugins</p>
+        <h1>Teach S-CLAW <span class="grad">one program properly</span></h1>
+        <p class="lead">S-CLAW can work a window it has never seen &mdash; look at the controls, click, type.
+          That is guessing. A plugin replaces the guessing with knowing, for one particular program,
+          written by somebody who actually uses it.</p>
+      </div>
+    </section>
+
+    <section class="section first">
+      <div class="wrap">
+        <div class="plug-note card">
+          <h3>A plugin cannot contain a program</h3>
+          <p>It is text: instructions, shortcuts, and the name of a door S-CLAW already knows how to
+            open. Installing refuses any file that can run &mdash; <code>.exe</code>, <code>.ps1</code>,
+            <code>.py</code>, anything &mdash; whatever the plugin says about itself. That is a
+            deliberate limit, not an oversight: if a plugin downloaded from a website could run a
+            program, the website becomes a way to put malware on every machine that trusts it.</p>
+          <p>And while a task is following a plugin you installed, S-CLAW checks each change with you,
+            even if you have turned that off. Your setting is a judgement about your own tasks, not
+            about somebody else&rsquo;s recipe.</p>
+        </div>
+
+        <div class="grid plug-grid" id="plugList"></div>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="wrap">
+        <p class="eyebrow">Installing</p>
+        <h2>Three steps</h2>
+        <ol class="plug-steps">
+          <li><b>Download</b> the <code>.zip</code> above. Do not unzip it.</li>
+          <li>In S-CLAW, open <b>Settings &rarr; Plugins</b> and click <b>Install a plugin&hellip;</b></li>
+          <li>Pick the <code>.zip</code>. S-CLAW checks what is inside it, then uses it the next time a
+            task fits. If it refuses, it says exactly which file was the problem.</li>
+        </ol>
+        <p class="plug-small">You also need the program itself &mdash; a Blender plugin cannot work
+          without Blender. Each plugin says what it needs.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <p class="eyebrow">For developers</p>
+        <h2>Write one for the program you know</h2>
+        <p class="lead">If you use a program every day, you know the ten things people actually ask of
+          it and the five ways it goes wrong. That is a plugin.</p>
+        <div class="grid plug-how">
+          <article class="card">
+            <h3>It is one Markdown file</h3>
+            <p>A folder with <code>PLUGIN.md</code> in it, zipped. Settings at the top between
+              <code>---</code> lines, plain instructions underneath.</p>
+          </article>
+          <article class="card">
+            <h3>Name the door</h3>
+            <p>A plugin&rsquo;s first job is not &ldquo;where to click&rdquo; &mdash; it is whether the
+              program has a scripting way in. Blender takes Python, Word and Excel have COM,
+              Inkscape has a command line. Driving a program through its own script engine is near
+              certain and fast; the mouse is the fallback for programs with no door.</p>
+          </article>
+          <article class="card">
+            <h3>Write down what goes wrong</h3>
+            <p>&ldquo;A new Blender scene already holds a cube, a camera and a light&rdquo; saves more
+              failures than three more steps.</p>
+          </article>
+          <article class="card">
+            <h3>Fill in <code>prompts</code></h3>
+            <p>The things a person would really say. They are shown to people, and S-CLAW matches on
+              them &mdash; you know the words your users type, and a description written for a reader
+              rarely contains them.</p>
+          </article>
+        </div>
+        <div class="plug-cta">
+          <a class="btn btn-primary btn-lg" id="plugDocs" href="#" target="_blank" rel="noopener">Read the format</a>
+          <a class="btn btn-ghost btn-lg" id="plugSubmit" href="#" target="_blank" rel="noopener">Submit a plugin</a>
+        </div>
+        <p class="plug-small">There is no upload form here yet: plugins are reviewed by hand before
+          they are listed, because anyone installing one is trusting it with their computer. Open an
+          issue with a link to your <code>.zip</code> and it gets read.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-grid">
+      <div>
+        <a class="brand" href="/">
+          <span class="orb orb-sm" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="brand-name">S-CLAW</span>
+        </a>
+        <p class="foot-tag">The free, private AI that uses your computer for you.</p>
+      </div>
+      <nav aria-label="Product">
+        <h4>Product</h4>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+        <a href="/plugins">Plugins</a>
+        <a href="/download">Download</a>
+      </nav>
+      <nav aria-label="Help">
+        <h4>Help</h4>
+        <a href="/faq">FAQ</a>
+        <a href="/download#brains">Offline install</a>
+      </nav>
+    </div>
+    <div class="wrap foot-bottom">
+      <p>Made by Oluwaseun Joshua · © <span id="year">2026</span></p>
+      <a class="made-by" href="https://oluwaseun-joshua-site.vercel.app/" target="_blank" rel="noopener" aria-label="Built by Oluwaseun, open his portfolio">
+        <span class="made-by-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"/></svg>
+        </span>
+        <span class="made-by-text">Built by <strong>Oluwaseun</strong></span>
+      </a>
+    </div>
+  </footer>
+
+  <script src="/downloads.js?v=202611051101"></script>
+  <script src="/plugins.js?v=202611131200"></script>
+  <script src="/app.js?v=202611051101"></script>
+</body>
+</html>
